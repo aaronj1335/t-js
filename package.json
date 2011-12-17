@@ -1,0 +1,11 @@
+{
+    "name": "t",
+    "description": "tree traversal and manipulation",
+    "author": "Aaron Stacy <aaron.r.stacy@gmail.com>",
+    "version": "0.0.1",
+    "devDependencies": {
+        "mocha": "0.4.x",
+        "chai": "0.1.x"
+    },
+    "engine": "node >= 0.6.0"
+}
