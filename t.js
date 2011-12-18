@@ -74,8 +74,12 @@ t.map = function() {
         var curParent = last(parentStack),
             newNode = nodeFactory(n, curParent? curParent.ret : undefined);
 
-        if (filter && ! newNode)
+        if (filter && ! newNode) {
             ctrl.cutoff = true;
+            if (n === last(curParent.n.children))
+                parentStack.pop();
+            return;
+        }
 
         if (! par) {
             if (isArray(node))
@@ -90,7 +94,7 @@ t.map = function() {
                 parentStack.pop();
         }
 
-        if (! ctrl.cutoff && n.children && n.children.length) {
+        if (n.children && n.children.length) {
             newNode.children = [];
             parentStack.push({n: n, ret: newNode});
         }

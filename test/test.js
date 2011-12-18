@@ -1,103 +1,4 @@
-var data = [
-    {
-        tree: {
-            name: 'a',
-            children: [
-                {
-                    name: 'b',
-                    children: [
-                        {
-                            name: 'c'
-                        },
-                        {
-                            name: 'd',
-                            children: [
-                                {
-                                    name: 'e'
-                                },
-                                {
-                                    name: 'f'
-                                }
-                            ]
-                        },
-                        {
-                            name: 'g'
-                        },
-                        {
-                            name: 'h',
-                            children: [
-                                {
-                                    name: 'i'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: 'j'
-                },
-                {
-                    name: 'k',
-                    children: [
-                        {
-                            name: 'l'
-                        },
-                        {
-                            name: 'm'
-                        }
-                    ]
-                }
-            ]
-        },
-        dict: {
-            'a': {par: undefined,   children: ['b', 'j', 'k']},
-            'b': {par: 'a',         children: ['c', 'd', 'g', 'h']},
-            'c': {par: 'b',         children: []},
-            'd': {par: 'b',         children: ['e', 'f']},
-            'e': {par: 'd',         children: []},
-            'f': {par: 'd',         children: []},
-            'g': {par: 'b',         children: []},
-            'h': {par: 'b',         children: ['i']},
-            'i': {par: 'h',         children: []},
-            'j': {par: 'a',         children: []},
-            'k': {par: 'a',         children: ['l', 'm']},
-            'l': {par: 'k',         children: []},
-            'm': {par: 'k',         children: []}
-        },
-        order: {
-            dfs: 'a b c d e f g h i j k l m'.split(' ')
-        }
-    },
 
-    {
-        tree: [
-            {
-                name: 'a',
-                children: [
-                    {
-                        name: 'b'
-                    },
-                    {
-                        name: 'c'
-                    }
-                ]
-            },
-            {
-                name: 'd'
-            }
-        ],
-        dict: {
-            'a': {par: undefined,   children: ['b', 'c']},
-            'b': {par: 'a',         children: []},
-            'c': {par: 'a',         children: []},
-            'd': {par: undefined,   children: []},
-
-        },
-        order: {
-            dfs: 'a b c d'.split(' ')
-        }
-    }
-];
 
 var pluck = function(key, arr) {
     var i, len, ret = [], cur = arr.length? arr[0] : undefined;
@@ -112,7 +13,7 @@ var print = function(t, level) {
     if (! t) return;
 
     if (typeof level === 'undefined')
-        level = 0;
+        level = 1;
 
     var len = t.children && t.children.length? t.children.length : 0,
         indent = Array(level).join('    '),
@@ -126,7 +27,8 @@ var print = function(t, level) {
 
 var t = require('t'),
     should = require('chai').should(),
-    expect = require('chai').expect;
+    expect = require('chai').expect,
+    data = require('test/fixtures');
 
 describe('t', function(){
     var tree = data[0].tree,
@@ -261,12 +163,15 @@ describe('t', function(){
 
         it('should correctly filter nodes that return false', function() {
             var tree2 = t.filter(tree, makeNode);
-            // console.dir(tree2);
-            console.log('\n\n'+print(tree2));
-            console.log('donezo');
             var expected = 'a b c g h j k l m'.split(' ');
             var found = [];
-            t.dfs(tree2, function() { found.push(this.name); });
+            t.dfs(tree2, function() {
+                found.push(this.name);
+                if (this.par)
+                    this.par.name.should.equal(dict[this.name].par);
+                else
+                    expect(dict[this.name].par).to.equal(undefined);
+            });
             found.should.eql(expected);
         });
     });
