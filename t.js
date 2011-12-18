@@ -28,39 +28,79 @@ if (typeof exports !== 'undefined') {
 //          optional second arg is an optional configuration object, final arg
 //          is the callback to be executed at each node
 t.dfs = function() {
-    var cur, par, children, ctrl, i, callback, config,
-        node =  toString.call(arguments[0]) == '[object Array]'?
-                {children: arguments[0]} : arguments[0],
-        nodes = [node],
-        parents = [undefined];
+    var cur, par, children, ctrl, i, numArgs = arguments.length,
+        node = arguments[0],
+        nodes = isArray(node)? node.slice(0).reverse() : [node],
+        config = numArgs === 3? arguments[1] : {},
+        callback = arguments[numArgs === 3? 2 : 1],
+        parents = [];
 
-    if (arguments.length === 3) {
-        config = arguments[1];
-        callback = arguments[2];
-    } else {
-        config = {};
-        callback = arguments[1]
-    }
+    for (i = nodes.length-1; i >= 0; i--)
+        parents.push(undefined);
 
     while (nodes.length > 0) {
         cur = nodes.pop();
         par = parents.pop();
 
         ctrl = {};
-        callback.call(cur, cur, par, undefined, ctrl);
+        callback.call(cur, cur, par, ctrl);
 
         if (ctrl.stop) break;
 
         children = cur.children? cur.children : [];
 
-        for (i = children.length-1; i >= 0; i--) {
+        for (i = ctrl.cutoff? -1 : children.length-1; i >= 0; i--) {
             nodes.push(children[i]);
             parents.push(cur);
         }
     }
 };
 
+var isArray = function(o) {
+    return toString.call(o) == '[object Array]';
+};
+
 t.map = function() {
+    var node = arguments[0],
+        numArgs = arguments.length,
+        config = numArgs === 3? arguments[1] : {},
+        filter = config.filter,
+        nodeFactory = arguments[numArgs === 3? 2 : 1],
+        ret = isArray(node)? [] : undefined,
+        last = function(l) { return l[l.length-1]; },
+        parentStack = [];
+
+    t.dfs(node, function(n, par, ctrl) {
+        var curParent = last(parentStack),
+            newNode = nodeFactory(n, curParent? curParent.ret : undefined);
+
+        if (filter && ! newNode)
+            ctrl.cutoff = true;
+
+        if (! par) {
+            if (isArray(node))
+                ret.push(newNode);
+            else
+                ret = newNode;
+
+        } else {
+            curParent.ret.children.push(newNode);
+
+            if (n === last(curParent.n.children))
+                parentStack.pop();
+        }
+
+        if (! ctrl.cutoff && n.children && n.children.length) {
+            newNode.children = [];
+            parentStack.push({n: n, ret: newNode});
+        }
+    });
+
+    return ret;
+};
+
+t.filter = function(node, nodeFactory) {
+    return t.map(node, {filter: true}, nodeFactory);
 };
 
 
