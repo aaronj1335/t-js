@@ -107,35 +107,6 @@ t.filter = function(node, nodeFactory) {
     return t.map(node, {filter: true}, nodeFactory);
 };
 
-// t.stroll(tree1, tree2, [id name], callback)
-// t.stroll = function() {
-//     var i, node1, par1, node2, par2,
-//         id = arguments.length >= 4? arguments[2] : 'id',
-//         callback = arguments.length >= 4? arguments[3] : arguments[2],
-//         nodes1 = isArray(tree1)? {children: tree1} : tree1,
-//         nodes1Parents = [undefined],
-//         nodes2 = isArray(tree2)? {children: tree2} : tree2,
-//         nodes2Parents = [undefined];
-
-//     while (nodes1.length) {
-//         node1 = nodes1.pop();
-//         node2 = nodes2.pop();
-
-//         callback(node1, node2);
-
-//         var node1Children = [], node2Children = [];
-//         for (i = 0, len = node1.children.length; i < len; i++) {
-//             var child1 = node1.children[i], child2 = node2.children[i];
-//             if (child1[id] === child2[id]) {
-//                 node1Children.push(child1);
-//                 node2Children.push(child2);
-//             } else {
-//                 // look ahead in the node2 children
-//                 for (j = i; j < len
-//             }
-//         }
-//     };
-// };
 t.stroll = function(tree1, tree2, callback) {
     var i, children, node2,
         nodes2 = isArray(tree2)? tree2.slice(0).reverse() : [tree2],
@@ -146,13 +117,11 @@ t.stroll = function(tree1, tree2, callback) {
 
         callback(node1, node2);
 
-        if (len(node1.children) === len(node2.children)) {
-            children = node2.children || [];
-            for (i = children.length-1; i >= 0; i--)
-                nodes2.push(children[i]);
-        } else {
+        if (len(node1.children) === len(node2.children))
+            for (i = (node2.children || []).length-1; i >= 0; i--)
+                nodes2.push(node2.children[i]);
+        else
             ctrl.cutoff = true;
-        }
 
     });
 };
