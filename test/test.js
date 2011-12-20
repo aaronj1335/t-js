@@ -26,7 +26,6 @@ var print = function(t, level) {
 };
 
 var t = require('t'),
-    should = require('chai').should(),
     expect = require('chai').expect,
     data = require('test/fixtures');
 
@@ -45,20 +44,21 @@ describe('t', function(){
             t.dfs(tree, function(node, par) {
                 var expected = dict[node.name];
 
-                node.name.should.equal(order.dfs[cur++]);
+                expect(node.name).to.be.equal(order.dfs[cur++]);
 
                 if (par)
-                    par.name.should.equal(expected.par);
+                    expect(par.name).to.be.equal(expected.par);
                 else
-                    expect(par).to.equal(expected.par);
+                    expect(par).to.be.equal(expected.par);
 
-                pluck('name', node.children||[]).should.eql(expected.children);
+                expect(pluck('name', node.children||[]))
+                    .to.be.eql(expected.children);
             });
         });
 
         it('sets "this" properly', function() {
             t.dfs(tree, function() {
-                this.name.should.equal(order.dfs[cur++]);
+                expect(this.name).to.be.equal(order.dfs[cur++]);
             });
         });
 
@@ -71,7 +71,7 @@ describe('t', function(){
                 if (node.name === stopNodeName)
                     ctrl.stop = true;
             });
-            visitedSet.should.eql(includedSet);
+            expect(visitedSet).to.be.eql(includedSet);
         });
 
         it('doesn\'t visit children if ctrl.cutoff is set to true', function() {
@@ -83,7 +83,7 @@ describe('t', function(){
                 if (node.name === cutoffNodeName)
                     ctrl.cutoff = true;
             });
-            visitedSet.should.eql(includedSet);
+            expect(visitedSet).to.be.eql(includedSet);
         });
 
         it('correctly traverses list of nodes', function() {
@@ -94,14 +94,15 @@ describe('t', function(){
             t.dfs(tree, function(node, par) {
                 var expected = dict[node.name];
 
-                node.name.should.equal(order.dfs[cur++]);
+                expect(node.name).to.be.equal(order.dfs[cur++]);
 
                 if (par)
-                    par.name.should.equal(expected.par);
+                    expect(par.name).to.be.equal(expected.par);
                 else
-                    expect(par).to.equal(expected.par);
+                    expect(par).to.be.equal(expected.par);
 
-                pluck('name', node.children||[]).should.eql(expected.children);
+                expect(pluck('name', node.children||[]))
+                    .to.be.eql(expected.children);
             });
         });
     });
@@ -110,7 +111,7 @@ describe('t', function(){
     describe('map', function() {
         var makeNode = function(node, par) {
             if (par)
-                par.should.include.keys('other');
+                expect(par).to.include.keys('other');
 
             return {
                 name: node.name,
@@ -123,10 +124,11 @@ describe('t', function(){
             var tree2 = t.map(tree, makeNode);
 
             t.dfs(tree2, function(node, par) {
-                node.other.should.equal('some other prop for ' + node.name);
-                node.should.not.equal(dict[node.name]);
+                expect(node.other)
+                    .to.be.equal('some other prop for ' + node.name);
+                expect(node).to.not.equal(dict[node.name]);
                 if (node.par)
-                    node.par.name.should.equal(par.name);
+                    expect(node.par.name).to.be.equal(par.name);
                 else
                     expect(par).to.equal(undefined);
             });
@@ -138,10 +140,10 @@ describe('t', function(){
 
             var tree2 = t.map(tree, makeNode);
             t.dfs(tree2, function(node, par) {
-                node.other.should.equal('some other prop for ' + node.name);
-                node.should.not.equal(dict[node.name]);
+                expect(node.other).to.be.equal('some other prop for ' + node.name);
+                expect(node).to.not.equal(dict[node.name]);
                 if (node.par)
-                    node.par.name.should.equal(par.name);
+                    expect(node.par.name).to.be.equal(par.name);
                 else
                     expect(par).to.equal(undefined);
             });
@@ -151,7 +153,7 @@ describe('t', function(){
     describe('filter', function() {
         var makeNode = function(node, par) {
             if (par)
-                par.should.include.keys('other');
+                expect(par).to.include.keys('other');
 
             if (node.name !== 'i' && node.name !== 'd')
                 return {
@@ -161,18 +163,67 @@ describe('t', function(){
                 };
         };
 
-        it('should correctly filter nodes that return false', function() {
+        it('correctly filters nodes that return false', function() {
             var tree2 = t.filter(tree, makeNode);
             var expected = 'a b c g h j k l m'.split(' ');
             var found = [];
             t.dfs(tree2, function() {
                 found.push(this.name);
                 if (this.par)
-                    this.par.name.should.equal(dict[this.name].par);
+                    expect(this.par.name).to.be.equal(dict[this.name].par);
                 else
                     expect(dict[this.name].par).to.equal(undefined);
             });
-            found.should.eql(expected);
+            expect(found).to.be.eql(expected);
+        });
+    });
+
+    describe('stroll', function() {
+        // returns true if tree1 is a non-strict subset of tree2
+        var isSubset = function(tree1, tree2) {
+            var subset = true;
+
+            t.stroll(tree1, tree2, function(node1, node2) {
+                if (node1.name !== node2.name)
+                    subset = false;
+
+                var node2Children = node2.children?
+                    pluck('name', node2.children) : [];
+
+                if (node1.children)
+                    node1.children.forEach(function(n, i) {
+                        if (node2Children.indexOf(n.name) < 0)
+                            subset = false;
+                    });
+            });
+
+            return subset;
+        };
+
+        it('correctly walks through two trees', function() {
+            var copy = t.map(tree, function(n) {
+                return {name: n.name, other: 'this is node '+n.name};
+            });
+
+            t.stroll(tree, copy, function(first, second) {
+                expect(first).to.not.equal(second);
+                expect(first.name).to.equal(second.name);
+                expect(second.other).to.equal('this is node '+second.name);
+            });
+
+            t.stroll(copy, tree, function(first, second) {
+                expect(first).to.not.equal(second);
+                expect(first.name).to.equal(second.name);
+                expect(first.other).to.equal('this is node '+first.name);
+            });
+        });
+
+        it('correctly walks through a subset tree', function() {
+            expect(isSubset(data[2].tree, data[0].tree)).to.be.true;
+        });
+
+        it('correctly walks through a superset tree', function() {
+            expect(isSubset(data[0].tree, data[2].tree)).to.be.false;
         });
     });
 });

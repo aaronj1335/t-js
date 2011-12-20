@@ -96,5 +96,36 @@ module.exports = [
         order: {
             dfs: 'a b c d'.split(' ')
         }
-    }
+    },
+    {
+        tree: {
+            name: 'a',
+            children: [
+                {
+                    name: 'b',
+                },
+                {
+                    name: 'j'
+                },
+                {
+                    name: 'k',
+                    children: [
+                        {
+                            name: 'l'
+                        }
+                    ]
+                }
+            ]
+        },
+        dict: {
+            'a': {par: undefined,   children: ['b', 'j', 'k']},
+            'b': {par: 'a',         children: ['c', 'd', 'g', 'h']},
+            'j': {par: 'a',         children: []},
+            'k': {par: 'a',         children: ['l', 'm']},
+            'l': {par: 'k',         children: []}
+        },
+        order: {
+            dfs: 'a b j k l'.split(' ')
+        }
+    },
 ];
