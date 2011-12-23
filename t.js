@@ -246,5 +246,10 @@ t.stroll = function(tree1, tree2, callback) {
     });
 };
 
+// credits
+// -------
+// this library is of coures heavily inspired by the work of @jashkenas and
+// others on `underscore`.  it is also built on the foundations laid by
+// @tjholowaychuk, the jQuery team, and @jakeluer.
 
 }());
