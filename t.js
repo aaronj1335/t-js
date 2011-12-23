@@ -1,32 +1,88 @@
+// version 0.0.1
+//
+
+// overview
+// ========
+// t.js is a tree-traversal library.  its only assumption is that the trees it
+// traverses are made up of objects with 'children' arrays:
+//
+//      {
+//          children: [
+//              { },
+//              {
+//                  children: [
+//                      { },
+//                      { }
+//                  ]
+//              }
+//          ]
+//      }
+//
+// testing
+// -------
+// unit tests are provided courtesy of
+// [`mocha.js`](http://visionmedia.github.com/mocha/) and
+// [`chai`](http://chaijs.com/).  on a unix system they can be run from the
+// command line with:
+//
+//      $ make test
+//
+// or viewed in most any system with a modern browser by opening the
+// `index.html` file.
+//
 (function() {
 
 
+// usage
+// -----
+// the `t` interface is exported in either the browser or server.  (got this
+// from [`underscore.js`](http://documentcloud.github.com/underscore/))
+//
 var t = {};
 
-// export the t interface in either the browser or server
-// got this from underscore: http://documentcloud.github.com/underscore/
 if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
         exports = module.exports = t;
     }
     exports.t = t;
 } else if (typeof define === 'function' && define.amd) {
-    // Register as a named module with AMD.
+    // if using an AMD library like [`require.js`](http://requirejs.org/), the
+    // library is exported with path `t`
     define('t', function() {
         return t;
     });
-} else {
-    // Exported as a string, for Closure Compiler "advanced" mode.
-    root['t'] = t;
 }
 
+var isArray = function(o) {
+    return toString.call(o) == '[object Array]';
+};
 
+
+// available functions
+// ===================
+//
+// t.dfs()
+// -------
 // perform a depth-first search, executing the given callback at each node.
 //
-//  t.dfs(node, [config object], function(node, par, ret, ctrl) { /* ... */ })
-//      --> first arg is the 'Node' object where the search will start,
-//          optional second arg is an optional configuration object, final arg
-//          is the callback to be executed at each node
+//      t.dfs(node, [config], function(node, par, ctrl) {
+//          /* ... */
+//      })
+//
+// - `node`:
+//      object where the search will start.  this could also be an array of
+//      objects
+// - `config`:
+//      this is used for specifying things like pre/post order traversal
+//      (currently not implemented)
+// - `callback` (last argument):
+//      function to be executed at each node.  the arguments are:
+//      - `node`: the current node
+//      - `par`: the current node's parent
+//      - `ctrl`: control object.  setting the `stop` property of this will end
+//      the search, setting the `cutoff` property of this will not visit any
+//      children of this node
+//
 t.dfs = function() {
     var cur, par, children, ctrl, i, numArgs = arguments.length,
         node = arguments[0],
@@ -56,10 +112,29 @@ t.dfs = function() {
     }
 };
 
-var isArray = function(o) {
-    return toString.call(o) == '[object Array]';
-};
-
+// t.map()
+// -------
+// given a tree, return a tree of the same structure made up of the objects
+// returned by the callback which is executed at each node.  think of the
+// `underscore`'s `_.map()` function, or python's `map()`
+//
+//      t.map(node, [config], function(node, par) {
+//          /* ... */
+//      })
+//
+// - `node`:
+//      object where the traversal will start.  this could also be an array of
+//      objects
+// - `config`:
+//      this is used for specifying things like pre/post order traversal
+//      (currently not implemented)
+// - `callback` (last argument):
+//      function to be executed at each node.  this must return an object.  the
+//      `map` function takes care of setting children.  the arguments are:
+//      - `node`: the current node
+//      - `par`: the current node's parent. note that this is the parent from
+//      the new tree that's being created.
+//
 t.map = function() {
     var node = arguments[0],
         numArgs = arguments.length,
@@ -103,10 +178,55 @@ t.map = function() {
     return ret;
 };
 
+// t.filter()
+// ----------
+// given a tree, return a tree of the same structure made up of the objects
+// returned by the callback which is executed at each node.  if, however, at a
+// given node the callback returns a falsy value, then the current node and all
+// of its descendents will be pruned from the output tree.
+//
+//      t.filter(node, function(node, par) {
+//          /* ... */
+//      })
+//
+// - `node`:
+//      object where the traversal will start.  this could also be an array of
+//      objects
+// - `callback` (last argument):
+//      function to be executed at each node.  this must return an object or a
+//      falsy value if the output tree should be pruned from the current node
+//      down.  the `filter` function takes care of setting children.  the
+//      arguments are:
+//      - `node`: the current node
+//      - `par`: the current node's parent. note that this is the parent from
+//      the new tree that's being created.
+//
 t.filter = function(node, nodeFactory) {
     return t.map(node, {filter: true}, nodeFactory);
 };
 
+// t.stroll()
+// ----------
+//
+// _a walk through the trees..._
+//
+// given two trees of similar structure, traverse both trees at the same time,
+// executing the given callback with the pair of corresponding nodes as
+// arguments.
+//
+//      t.stroll(tree1, tree2, function(node1, node2) {
+//          /* ... */
+//      })
+//
+// - `tree1`:
+//      the first tree of the traversal
+// - `node2`:
+//      the second tree of the traversal
+// - `callback` (last argument):
+//      function to be executed at each node. the arguments are:
+//      - `node1`: the node from the first tree
+//      - `node2`: the node from the second tree
+//
 t.stroll = function(tree1, tree2, callback) {
     var i, children, node2,
         nodes2 = isArray(tree2)? tree2.slice(0).reverse() : [tree2],
@@ -127,4 +247,4 @@ t.stroll = function(tree1, tree2, callback) {
 };
 
 
-}())
+}());

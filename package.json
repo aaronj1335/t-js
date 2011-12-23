@@ -5,6 +5,8 @@
     "version": "0.0.1",
     "devDependencies": {
         "mocha": "0.4.x",
+        "underscore": "1.2.x",
+        "docco": "0.3.x",
         "chai": "0.1.x"
     },
     "engine": "node >= 0.6.0"
