@@ -54,7 +54,7 @@ if (typeof exports !== 'undefined') {
 }
 
 var isArray = function(o) {
-    return toString.call(o) == '[object Array]';
+    return Object.prototype.toString.call(o) == '[object Array]';
 };
 
 
