@@ -40,6 +40,7 @@
 //
 var t = {};
 
+/*global exports:true, module:true, define*/
 if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
         exports = module.exports = t;
