@@ -226,5 +226,29 @@ describe('t', function(){
             expect(isSubset(data[0].tree, data[2].tree)).to.be.false;
         });
     });
+
+    describe('find', function() {
+        it('finds a node that exists', function() {
+            var res = t.find(tree, function() { return this.name === 'a'; });
+            expect(res.name).to.equal('a');
+        });
+
+        it('returns undefined when no match found', function() {
+            var res = t.find(tree, function() { return this.name === 'foo'; });
+            expect(typeof res).to.equal('undefined');
+        });
+
+        it('stops traversing as soon as a match is found', function() {
+            var visited = [],
+                expected = 'a b c d e'.split(' '),
+                res = t.find(tree, function() {
+                    visited.push(this.name);
+                    return this.name === 'e';
+                });
+            expect(res.name).to.equal('e');
+            expect(visited).to.eql(expected);
+        });
+
+    });
 });
 

@@ -246,6 +246,38 @@ t.stroll = function(tree1, tree2, callback) {
     });
 };
 
+// t.find()
+// ----------
+//
+// given a tree and a truth test, return the first node that responds with a
+// truthy value
+//
+//      t.find(tree, function(node, par) {
+//          /* ... */
+//      })
+//
+// - `tree`:
+//      the tree in which to find the node
+// - `callback` (last argument):
+//      function to be executed at each node. if this function returns a truthy
+//      value, the traversal will stop and `find` will return the current node.
+//      the arguments are:
+//      - `node`: the current node
+//      - `par`: the parent of the current node
+//
+t.find = function(tree, callback) {
+    var found;
+
+    t.dfs(tree, function(node, par, ctrl) {
+        if (callback.call(node, node, par)) {
+            ctrl.stop = true;
+            found = this;
+        }
+    });
+
+    return found;
+};
+
 // credits
 // -------
 // this library is of coures heavily inspired by the work of @jashkenas and
