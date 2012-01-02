@@ -280,7 +280,7 @@ t.find = function(tree, callback) {
 
 // credits
 // -------
-// this library is of coures heavily inspired by the work of @jashkenas and
+// this library is of course heavily inspired by the work of @jashkenas and
 // others on `underscore`.  it is also built on the foundations laid by
 // @tjholowaychuk, the jQuery team, and @jakeluer.
 
