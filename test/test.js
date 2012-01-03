@@ -187,6 +187,14 @@ describe('t', function(){
             else
                 expect(tree2).to.equal(undefined);
         });
+
+        it('correctly removes children arrays', function() {
+            var tree2 = t.filter(tree, makeNode), correct = false;
+            t.dfs(tree2, function() {
+                if (this.name === 'h')
+                    expect(this.children).to.equal(undefined);
+            });
+        });
     });
 
     describe('stroll', function() {

@@ -152,8 +152,11 @@ t.map = function() {
 
         if (filter && ! newNode) {
             ctrl.cutoff = true;
-            if (curParent && n === last(curParent.n.children))
+            if (curParent && n === last(curParent.n.children)) {
                 parentStack.pop();
+                if (curParent.ret.children && ! curParent.ret.children.length)
+                    delete curParent.ret.children;
+            }
             return;
         }
 
@@ -166,8 +169,11 @@ t.map = function() {
         } else {
             curParent.ret.children.push(newNode);
 
-            if (n === last(curParent.n.children))
+            if (n === last(curParent.n.children)) {
                 parentStack.pop();
+                if (curParent.ret.children && ! curParent.ret.children.length)
+                    delete curParent.ret.children;
+            }
         }
 
         if (n.children && n.children.length) {
