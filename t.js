@@ -152,7 +152,7 @@ t.map = function() {
 
         if (filter && ! newNode) {
             ctrl.cutoff = true;
-            if (n === last(curParent.n.children))
+            if (curParent && n === last(curParent.n.children))
                 parentStack.pop();
             return;
         }

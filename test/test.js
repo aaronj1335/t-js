@@ -176,6 +176,17 @@ describe('t', function(){
             });
             expect(found).to.be.eql(expected);
         });
+
+        it('correctly handles immediate false return', function() {
+            var tree2 = t.filter(tree, function() { return false; });
+
+            if (Object.prototype.toString.call(tree2) == '[object Array]')
+                expect(tree2).to.eql([]);
+            if (Object.prototype.toString.call(tree2) == '[object Object]')
+                expect(tree2).to.eql({});
+            else
+                expect(tree2).to.equal(undefined);
+        });
     });
 
     describe('stroll', function() {
