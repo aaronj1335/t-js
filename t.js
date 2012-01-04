@@ -37,8 +37,14 @@
 
 // usage
 // -----
-// the `t` interface is exported in either the browser or server.  (got this
-// from [`underscore.js`](http://documentcloud.github.com/underscore/))
+// the `t` interface is exported in either the browser or node.js.  (got this
+// from [`underscore.js`](http://documentcloud.github.com/underscore/)).  the
+// library can be installed from [npm](http://search.npmjs.org/#/t):
+//
+//     $ npm install t
+//
+// or included as an AMD library (via something like
+// [`require.js`](http://requirejs.org/)) with the path `t`
 //
 var t = {};
 
@@ -49,8 +55,6 @@ if (typeof exports !== 'undefined') {
     }
     exports.t = t;
 } else if (typeof define === 'function' && define.amd) {
-    // if using an AMD library like [`require.js`](http://requirejs.org/), the
-    // library is exported with path `t`
     define('t', function() {
         return t;
     });

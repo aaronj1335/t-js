@@ -33,8 +33,14 @@ documentation is generated with the `make readme` target.
 
 usage
 -----
-the `t` interface is exported in either the browser or server.  (got this
-from [`underscore.js`](http://documentcloud.github.com/underscore/))
+the `t` interface is exported in either the browser or node.js.  (got this
+from [`underscore.js`](http://documentcloud.github.com/underscore/)).  the
+library can be installed from [npm](http://search.npmjs.org/#/t):
+
+    $ npm install t
+
+or included as an AMD library (via something like
+[`require.js`](http://requirejs.org/)) with the path `t`
 
 available functions
 ===================
