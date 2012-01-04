@@ -1,0 +1,275 @@
+<!DOCTYPE html>  <html> <head>   <title>t.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               t.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>version 0.0.1</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>overview</h1>
+
+<p>t.js is a tree-traversal library.  its only assumption is that the trees it
+traverses are made up of objects with 'children' arrays:</p>
+
+<pre><code> {
+     children: [
+         { },
+         {
+             children: [
+                 { },
+                 { }
+             ]
+         }
+     ]
+ }
+</code></pre>
+
+<h2>testing</h2>
+
+<p>unit tests are provided courtesy of
+<a href="http://visionmedia.github.com/mocha/"><code>mocha.js</code></a> and
+<a href="http://chaijs.com/"><code>chai</code></a>.  on a unix system they can be run from the
+command line with:</p>
+
+<pre><code> $ make test
+</code></pre>
+
+<p>or viewed in most any system with a modern browser by opening the
+<code>index.html</code> file.</p>
+
+<p>documentation is generated with the <code>make readme</code> target.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h2>usage</h2>
+
+<p>the <code>t</code> interface is exported in either the browser or server.  (got this
+from <a href="http://documentcloud.github.com/underscore/"><code>underscore.js</code></a>)</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="cm">/*global exports:true, module:true, define*/</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">module</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">exports</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">t</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">t</span> <span class="o">=</span> <span class="nx">t</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">define</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">define</span><span class="p">.</span><span class="nx">amd</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>if using an AMD library like <a href="http://requirejs.org/"><code>require.js</code></a>, the
+library is exported with path <code>t</code></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">define</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">isArray</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;[object Array]&#39;</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h1>available functions</h1>
+
+<h2>t.dfs()</h2>
+
+<p>perform a depth-first search, executing the given callback at each node.</p>
+
+<pre><code> t.dfs(node, [config], function(node, par, ctrl) {
+     /* ... */
+ })
+</code></pre>
+
+<ul>
+<li><code>node</code>:
+ object where the search will start.  this could also be an array of
+ objects</li>
+<li><code>config</code>:
+ this is used for specifying things like pre/post order traversal
+ (currently not implemented)</li>
+<li><code>callback</code> (last argument):
+ function to be executed at each node.  the arguments are:
+<ul><li><code>node</code>: the current node</li>
+<li><code>par</code>: the current node's parent</li>
+<li><code>ctrl</code>: control object.  setting the <code>stop</code> property of this will end
+the search, setting the <code>cutoff</code> property of this will not visit any
+children of this node</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span><span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">reverse</span><span class="p">()</span> <span class="o">:</span> <span class="p">[</span><span class="nx">node</span><span class="p">],</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="nx">numArgs</span> <span class="o">===</span> <span class="mi">3</span><span class="o">?</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="p">{},</span>
+        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">numArgs</span> <span class="o">===</span> <span class="mi">3</span><span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="nx">parents</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span>
+        <span class="nx">parents</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cur</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+        <span class="nx">par</span> <span class="o">=</span> <span class="nx">parents</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+
+        <span class="nx">ctrl</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">cur</span><span class="p">,</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">stop</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+
+        <span class="nx">children</span> <span class="o">=</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">children</span><span class="o">?</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">children</span> <span class="o">:</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">cutoff</span><span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="nx">parents</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>t.map()</h2>
+
+<p>given a tree, return a tree of the same structure made up of the objects
+returned by the callback which is executed at each node.  think of the
+<code>underscore</code>'s <code>_.map()</code> function, or python's <code>map()</code></p>
+
+<pre><code> t.map(node, [config], function(node, par) {
+     /* ... */
+ })
+</code></pre>
+
+<ul>
+<li><code>node</code>:
+ object where the traversal will start.  this could also be an array of
+ objects</li>
+<li><code>config</code>:
+ this is used for specifying things like pre/post order traversal
+ (currently not implemented)</li>
+<li><code>callback</code> (last argument):
+ function to be executed at each node.  this must return an object.  the
+ <code>map</code> function takes care of setting children.  the arguments are:
+<ul><li><code>node</code>: the current node</li>
+<li><code>par</code>: the current node's parent. note that this is the parent from
+the new tree that's being created.</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="nx">numArgs</span> <span class="o">===</span> <span class="mi">3</span><span class="o">?</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="p">{},</span>
+        <span class="nx">filter</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span>
+        <span class="nx">nodeFactory</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">numArgs</span> <span class="o">===</span> <span class="mi">3</span><span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span><span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+        <span class="nx">last</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">[</span><span class="nx">l</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="p">},</span>
+        <span class="nx">parentStack</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">curParent</span> <span class="o">=</span> <span class="nx">last</span><span class="p">(</span><span class="nx">parentStack</span><span class="p">),</span>
+            <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">nodeFactory</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">curParent</span><span class="o">?</span> <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nx">newNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ctrl</span><span class="p">.</span><span class="nx">cutoff</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">curParent</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">===</span> <span class="nx">last</span><span class="p">(</span><span class="nx">curParent</span><span class="p">.</span><span class="nx">n</span><span class="p">.</span><span class="nx">children</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">parentStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+                    <span class="k">delete</span> <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nx">par</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span>
+                <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+            <span class="k">else</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">===</span> <span class="nx">last</span><span class="p">(</span><span class="nx">curParent</span><span class="p">.</span><span class="nx">n</span><span class="p">.</span><span class="nx">children</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">parentStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+                    <span class="k">delete</span> <span class="nx">curParent</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">children</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">newNode</span><span class="p">.</span><span class="nx">children</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">parentStack</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">n</span><span class="o">:</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">ret</span><span class="o">:</span> <span class="nx">newNode</span><span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h2>t.filter()</h2>
+
+<p>given a tree, return a tree of the same structure made up of the objects
+returned by the callback which is executed at each node.  if, however, at a
+given node the callback returns a falsy value, then the current node and all
+of its descendents will be pruned from the output tree.</p>
+
+<pre><code> t.filter(node, function(node, par) {
+     /* ... */
+ })
+</code></pre>
+
+<ul>
+<li><code>node</code>:
+ object where the traversal will start.  this could also be an array of
+ objects</li>
+<li><code>callback</code> (last argument):
+ function to be executed at each node.  this must return an object or a
+ falsy value if the output tree should be pruned from the current node
+ down.  the <code>filter</code> function takes care of setting children.  the
+ arguments are:
+<ul><li><code>node</code>: the current node</li>
+<li><code>par</code>: the current node's parent. note that this is the parent from
+the new tree that's being created.</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">nodeFactory</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">{</span><span class="nx">filter</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span> <span class="nx">nodeFactory</span><span class="p">);</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h2>t.stroll()</h2>
+
+<p><em>a walk through the trees...</em></p>
+
+<p>given two trees of similar structure, traverse both trees at the same time,
+executing the given callback with the pair of corresponding nodes as
+arguments.</p>
+
+<pre><code> t.stroll(tree1, tree2, function(node1, node2) {
+     /* ... */
+ })
+</code></pre>
+
+<ul>
+<li><code>tree1</code>:
+ the first tree of the traversal</li>
+<li><code>node2</code>:
+ the second tree of the traversal</li>
+<li><code>callback</code> (last argument):
+ function to be executed at each node. the arguments are:
+<ul><li><code>node1</code>: the node from the first tree</li>
+<li><code>node2</code>: the node from the second tree</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">stroll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tree1</span><span class="p">,</span> <span class="nx">tree2</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">node2</span><span class="p">,</span>
+        <span class="nx">nodes2</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">tree2</span><span class="p">)</span><span class="o">?</span> <span class="nx">tree2</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">reverse</span><span class="p">()</span> <span class="o">:</span> <span class="p">[</span><span class="nx">tree2</span><span class="p">],</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="k">typeof</span> <span class="nx">a</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="p">};</span>
+
+    <span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span><span class="p">(</span><span class="nx">tree1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node1</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node2</span> <span class="o">=</span> <span class="nx">nodes2</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">node1</span><span class="p">,</span> <span class="nx">node2</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">(</span><span class="nx">node1</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> <span class="o">===</span> <span class="nx">len</span><span class="p">(</span><span class="nx">node2</span><span class="p">.</span><span class="nx">children</span><span class="p">))</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node2</span><span class="p">.</span><span class="nx">children</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span>
+                <span class="nx">nodes2</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">node2</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="k">else</span>
+            <span class="nx">ctrl</span><span class="p">.</span><span class="nx">cutoff</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+    <span class="p">});</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h2>t.find()</h2>
+
+<p>given a tree and a truth test, return the first node that responds with a
+truthy value</p>
+
+<pre><code> t.find(tree, function(node, par) {
+     /* ... */
+ })
+</code></pre>
+
+<ul>
+<li><code>tree</code>:
+ the tree in which to find the node</li>
+<li><code>callback</code> (last argument):
+ function to be executed at each node. if this function returns a truthy
+ value, the traversal will stop and <code>find</code> will return the current node.
+ the arguments are:
+<ul><li><code>node</code>: the current node</li>
+<li><code>par</code>: the parent of the current node</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">found</span><span class="p">;</span>
+
+    <span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">par</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">ctrl</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">found</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h2>credits</h2>
+
+<p>this library is of course heavily inspired by the work of @jashkenas and
+others on <code>underscore</code>.  it is also built on the foundations laid by
+@tjholowaychuk, the jQuery team, and @jakeluer.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">}());</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -26,7 +26,10 @@ command line with:
 
      $ make test
 
-or viewed in the browser by opening the `index.html` file.
+or viewed in most any system with a modern browser by opening the
+`index.html` file.
+
+documentation is generated with the `make readme` target.
 
 usage
 -----
@@ -126,3 +129,27 @@ arguments.
      - `node1`: the node from the first tree
      - `node2`: the node from the second tree
 
+t.find()
+----------
+
+given a tree and a truth test, return the first node that responds with a
+truthy value
+
+     t.find(tree, function(node, par) {
+         /* ... */
+     })
+
+- `tree`:
+     the tree in which to find the node
+- `callback` (last argument):
+     function to be executed at each node. if this function returns a truthy
+     value, the traversal will stop and `find` will return the current node.
+     the arguments are:
+     - `node`: the current node
+     - `par`: the parent of the current node
+
+credits
+-------
+this library is of course heavily inspired by the work of @jashkenas and
+others on `underscore`.  it is also built on the foundations laid by
+@tjholowaychuk, the jQuery team, and @jakeluer.

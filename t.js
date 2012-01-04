@@ -30,6 +30,8 @@
 // or viewed in most any system with a modern browser by opening the
 // `index.html` file.
 //
+// documentation is generated with the `make readme` target.
+//
 (function() {
 
 
