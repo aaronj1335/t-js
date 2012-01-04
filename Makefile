@@ -7,10 +7,17 @@ web_test:
 test_wrap:
 	./bin/sigwrap make test
 
+readme: README.md
+
+README.md: docs
+	grep '^\/\/' < t.js | sed -E 's|^//[ ]?||' > README.md
+
 docs:
 	docco t.js
 
-readme:
-	grep '^\/\/' < t.js | sed -E 's|^//[ ]?||' > README.md
+repo: .git/hooks/pre-commit
 
-.PHONY: test web_test test_wrap docs readme
+.git/hooks/pre-commit:
+	cp bin/pre-commit .git/hooks/
+
+.PHONY: test web_test test_wrap repo readme
