@@ -2,7 +2,7 @@
     "name": "t",
     "description": "tree traversal and manipulation",
     "author": "Aaron Stacy <aaron.r.stacy@gmail.com>",
-    "version": "0.0.1",
+    "version": "0.1.1",
     "devDependencies": {
         "mocha": "0.4.x",
         "underscore": "1.2.x",
