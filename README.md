@@ -150,6 +150,8 @@ truthy value
 
 credits
 -------
-this library is of course heavily inspired by the work of @jashkenas and
-others on `underscore`.  it is also built on the foundations laid by
-@tjholowaychuk, the jQuery team, and @jakeluer.
+this library is of course heavily inspired by the work of
+[@jashkenas](https://twitter.com/#!/jashkenas) and others on `underscore`.
+it also makes use of the hard work by folks like
+[@tjholowaychuk](https://twitter.com/#!/tjholowaychuk), the jQuery team, and
+[@jakeluer](https://twitter.com/#!/jakeluer).
