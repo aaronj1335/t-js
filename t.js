@@ -110,7 +110,7 @@ t.dfs = function() {
 
         if (ctrl.stop) break;
 
-        children = cur.children? cur.children : [];
+        children = (cur && cur.children)? cur.children : [];
 
         for (i = ctrl.cutoff? -1 : children.length-1; i >= 0; i--) {
             nodes.push(children[i]);
@@ -250,7 +250,7 @@ t.stroll = function(tree1, tree2, callback) {
 
         callback(node1, node2);
 
-        if (len(node1.children) === len(node2.children))
+        if (node1 && node2 && len(node1.children) === len(node2.children))
             for (i = (node2.children || []).length-1; i >= 0; i--)
                 nodes2.push(node2.children[i]);
         else
