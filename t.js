@@ -98,6 +98,8 @@ t.dfs = function() {
         callback = arguments[numArgs === 3? 2 : 1],
         parents = [];
 
+    if (typeof nodes[0] === 'undefined' && nodes.length === 1) return;
+
     for (i = nodes.length-1; i >= 0; i--)
         parents.push(undefined);
 

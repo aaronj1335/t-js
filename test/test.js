@@ -105,6 +105,16 @@ describe('t', function(){
                     .to.be.eql(expected.children);
             });
         });
+
+        it('returns immediately if first arg is undefined', function() {
+            var tree = undefined, count = 0;
+
+            t.dfs(tree, function() {
+                count++;
+            });
+
+            expect(count).to.equal(0);
+        });
     });
 
 
