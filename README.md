@@ -1,4 +1,4 @@
-version 0.1.2
+version 0.2.0
 
 overview
 ========
@@ -44,7 +44,6 @@ or included as an AMD library (via something like
 
 available functions
 ===================
-
 t.dfs()
 -------
 perform a depth-first search, executing the given callback at each node.

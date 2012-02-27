@@ -1,4 +1,4 @@
-// version 0.1.2
+// version 0.2.0
 //
 
 // overview
@@ -67,7 +67,7 @@ var isArray = function(o) {
 
 // available functions
 // ===================
-//
+
 // t.dfs()
 // -------
 // perform a depth-first search, executing the given callback at each node.
@@ -311,7 +311,6 @@ t._dfsPostOrder = function(nodes, config, callback) {
     var cur, par, ctrl, node, i,
         last = function(l) { return l[l.length-1]; },
         ret = [],
-        // stack = [];
         stack = [{
             node: nodes.pop(),
             index: 0,
