@@ -71,17 +71,21 @@ library can be installed from <a href="http://search.npmjs.org/#/t">npm</a>:</p>
  object where the search will start.  this could also be an array of
  objects</li>
 <li><code>config</code>:
- this is used for specifying things like pre/post order traversal
- (currently not implemented)</li>
+ if this is an object w/ the 'order' property set to 'post', a
+ post-order traversal will be performed.  this is generally worse
+ performance, but the <code>callback</code> has access to the return values of its
+ child nodes.</li>
 <li><code>callback</code> (last argument):
  function to be executed at each node.  the arguments are:
 <ul><li><code>node</code>: the current node</li>
 <li><code>par</code>: the current node's parent</li>
 <li><code>ctrl</code>: control object.  setting the <code>stop</code> property of this will end
 the search, setting the <code>cutoff</code> property of this will not visit any
-children of this node</li></ul></li>
+children of this node</li>
+<li><code>ret</code>: return values of child nodes.  this is only set if <code>dfs()</code> is
+called with the <code>order</code> property set to <code>post</code>.</li></ul></li>
 </ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span><span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">reverse</span><span class="p">()</span> <span class="o">:</span> <span class="p">[</span><span class="nx">node</span><span class="p">],</span>
         <span class="nx">config</span> <span class="o">=</span> <span class="nx">numArgs</span> <span class="o">===</span> <span class="mi">3</span><span class="o">?</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="p">{},</span>
@@ -89,6 +93,11 @@ children of this node</li></ul></li>
         <span class="nx">parents</span> <span class="o">=</span> <span class="p">[];</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">order</span> <span class="o">===</span> <span class="s1">&#39;post&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">_dfsPostOrder</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span><span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="nx">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="p">}</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span>
         <span class="nx">parents</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
@@ -275,7 +284,51 @@ truthy value</p>
     <span class="p">});</span>
 
     <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h2>credits</h2>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h2>t._dfsPostOrder()</h2>
+
+<p>this is a module-private function used by <code>dfs()</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">_dfsPostOrder</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span>
+        <span class="nx">last</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">[</span><span class="nx">l</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="p">},</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="p">[],</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>stack = [];</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">stack</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="nx">node</span><span class="o">:</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">pop</span><span class="p">(),</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">ret</span><span class="o">:</span> <span class="p">[]</span>
+        <span class="p">}];</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cur</span> <span class="o">=</span> <span class="nx">last</span><span class="p">(</span><span class="nx">stack</span><span class="p">);</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">children</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">node</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">cur</span><span class="p">.</span><span class="nx">index</span><span class="o">++</span><span class="p">],</span>
+                    <span class="nx">index</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nx">ret</span><span class="o">:</span> <span class="p">[]</span>
+                <span class="p">});</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">ctrl</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">par</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">par</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">par</span><span class="p">.</span><span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">par</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">ret</span><span class="p">));</span>
+            <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">ret</span><span class="p">));</span>
+            <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+                <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">node</span><span class="o">:</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">pop</span><span class="p">(),</span>
+                    <span class="nx">index</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nx">ret</span><span class="o">:</span> <span class="p">[]</span>
+                <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h2>credits</h2>
 
 <p>this library is of course heavily inspired by the work of
 <a href="https://twitter.com/#!/jashkenas">@jashkenas</a> and others on <code>underscore</code>.

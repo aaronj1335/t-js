@@ -279,5 +279,98 @@ describe('t', function(){
         });
 
     });
+
+    describe('post order dfs', function() {
+        it('correctly captures return values', function() {
+            var actualOrder = [], ret;
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var childNames = (node.children || []).map(function(child) {
+                    return child.name;
+                });
+                expect(ret).to.eql(childNames);
+                actualOrder.push(this.name);
+                return node.name;
+            });
+            expect(ret).to.equal('a');
+            expect(actualOrder).to.eql(order.dfsPost);
+        });
+
+        it('correctly captures return values of list', function() {
+            var ret,
+                tree = data[1].tree,
+                dict = data[1].dict,
+                order = data[1].order,
+                actualOrder = [];
+            expect(tree).to.be.an.instanceof(Array);
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var childNames = pluck('name', node.children || []);
+                expect(ret).to.eql(childNames);
+                actualOrder.push(this.name);
+                return node.name;
+            });
+            expect(ret).to.eql(['a', 'd']);
+        });
+
+        it('correctly captures return values 2', function() {
+            var ret,
+                tree = data[2].tree,
+                dict = data[2].dict,
+                order = data[2].order,
+                actualOrder = [];
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var childNames = pluck('name', node.children || []);
+                expect(ret).to.eql(childNames);
+                actualOrder.push(this.name);
+                return node.name;
+            });
+            expect(ret).to.eql('a');
+        });
+
+        it('can build up a clone of the tree', function() {
+            var ret;
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var newNode = {};
+                if (ret.length) {
+                    newNode.children = ret;
+                }
+                newNode.name = this.name;
+                return newNode;
+            });
+            expect(ret).to.eql(tree);
+        });
+
+        it('can build up a clone of the tree 2', function() {
+            var ret,
+                tree = data[1].tree,
+                dict = data[1].dict,
+                order = data[1].order;
+            expect(tree).to.be.an.instanceof(Array);
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var newNode = {};
+                if (ret.length) {
+                    newNode.children = ret;
+                }
+                newNode.name = this.name;
+                return newNode;
+            });
+            expect(ret).to.eql(tree);
+        });
+
+        it('can build up a clone of the tree 3', function() {
+            var ret,
+                tree = data[2].tree,
+                dict = data[2].dict,
+                order = data[2].order;
+            ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
+                var newNode = {};
+                if (ret.length) {
+                    newNode.children = ret;
+                }
+                newNode.name = this.name;
+                return newNode;
+            });
+            expect(ret).to.eql(tree);
+        });
+    });
 });
 

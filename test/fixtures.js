@@ -65,7 +65,8 @@ module.exports = [
             'm': {par: 'k',         children: []}
         },
         order: {
-            dfs: 'a b c d e f g h i j k l m'.split(' ')
+            dfs: 'a b c d e f g h i j k l m'.split(' '),
+            dfsPost: 'c e f d g i h b j l m k a'.split(' ')
         }
     },
 
@@ -90,11 +91,12 @@ module.exports = [
             'a': {par: undefined,   children: ['b', 'c']},
             'b': {par: 'a',         children: []},
             'c': {par: 'a',         children: []},
-            'd': {par: undefined,   children: []},
+            'd': {par: undefined,   children: []}
 
         },
         order: {
-            dfs: 'a b c d'.split(' ')
+            dfs: 'a b c d'.split(' '),
+            dfsPost: 'b c a d'.split(' ')
         }
     },
     {
@@ -102,7 +104,7 @@ module.exports = [
             name: 'a',
             children: [
                 {
-                    name: 'b',
+                    name: 'b'
                 },
                 {
                     name: 'j'
@@ -125,7 +127,8 @@ module.exports = [
             'l': {par: 'k',         children: []}
         },
         order: {
-            dfs: 'a b j k l'.split(' ')
+            dfs: 'a b j k l'.split(' '),
+            dfsPost: 'b j l k a'.split(' ')
         }
-    },
+    }
 ];

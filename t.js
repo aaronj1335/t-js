@@ -80,8 +80,10 @@ var isArray = function(o) {
 //      object where the search will start.  this could also be an array of
 //      objects
 // - `config`:
-//      this is used for specifying things like pre/post order traversal
-//      (currently not implemented)
+//      if this is an object w/ the 'order' property set to 'post', a
+//      post-order traversal will be performed.  this is generally worse
+//      performance, but the `callback` has access to the return values of its
+//      child nodes.
 // - `callback` (last argument):
 //      function to be executed at each node.  the arguments are:
 //      - `node`: the current node
@@ -89,9 +91,11 @@ var isArray = function(o) {
 //      - `ctrl`: control object.  setting the `stop` property of this will end
 //      the search, setting the `cutoff` property of this will not visit any
 //      children of this node
+//      - `ret`: return values of child nodes.  this is only set if `dfs()` is
+//      called with the `order` property set to `post`.
 //
 t.dfs = function() {
-    var cur, par, children, ctrl, i, numArgs = arguments.length,
+    var cur, par, children, ctrl, i, ret, numArgs = arguments.length,
         node = arguments[0],
         nodes = isArray(node)? node.slice(0).reverse() : [node],
         config = numArgs === 3? arguments[1] : {},
@@ -99,6 +103,11 @@ t.dfs = function() {
         parents = [];
 
     if (typeof nodes[0] === 'undefined' && nodes.length === 1) return;
+
+    if (config.order === 'post') {
+        ret = t._dfsPostOrder(nodes, config, callback);
+        return isArray(node)? ret : ret[0];
+    }
 
     for (i = nodes.length-1; i >= 0; i--)
         parents.push(undefined);
@@ -291,6 +300,57 @@ t.find = function(tree, callback) {
     });
 
     return found;
+};
+
+
+// t._dfsPostOrder()
+// -----------------
+//
+// this is a module-private function used by `dfs()`
+t._dfsPostOrder = function(nodes, config, callback) {
+    var cur, par, ctrl, node, i,
+        last = function(l) { return l[l.length-1]; },
+        ret = [],
+        // stack = [];
+        stack = [{
+            node: nodes.pop(),
+            index: 0,
+            ret: []
+        }];
+
+    while (stack.length) {
+        cur = last(stack);
+        node = cur.node;
+
+        if (node.children && node.children.length) {
+            if (cur.index < node.children.length) {
+                stack.push({
+                    node: node.children[cur.index++],
+                    index: 0,
+                    ret: []
+                });
+                continue;
+            }
+        }
+
+        ctrl = {};
+        par = stack[stack.length-2];
+        if (par) {
+            par.ret.push(callback.call(node, node, par.node, ctrl, cur.ret));
+            stack.pop();
+        } else {
+            ret.push(callback.call(node, node, undefined, ctrl, cur.ret));
+            stack.pop();
+            if (nodes.length)
+                stack.push({
+                    node: nodes.pop(),
+                    index: 0,
+                    ret: []
+                });
+        }
+    }
+
+    return ret;
 };
 
 // credits

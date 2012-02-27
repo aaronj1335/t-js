@@ -57,8 +57,10 @@ perform a depth-first search, executing the given callback at each node.
      object where the search will start.  this could also be an array of
      objects
 - `config`:
-     this is used for specifying things like pre/post order traversal
-     (currently not implemented)
+     if this is an object w/ the 'order' property set to 'post', a
+     post-order traversal will be performed.  this is generally worse
+     performance, but the `callback` has access to the return values of its
+     child nodes.
 - `callback` (last argument):
      function to be executed at each node.  the arguments are:
      - `node`: the current node
@@ -66,6 +68,8 @@ perform a depth-first search, executing the given callback at each node.
      - `ctrl`: control object.  setting the `stop` property of this will end
      the search, setting the `cutoff` property of this will not visit any
      children of this node
+     - `ret`: return values of child nodes.  this is only set if `dfs()` is
+     called with the `order` property set to `post`.
 
 t.map()
 -------
@@ -154,6 +158,10 @@ truthy value
      - `node`: the current node
      - `par`: the parent of the current node
 
+t._dfsPostOrder()
+-----------------
+
+this is a module-private function used by `dfs()`
 credits
 -------
 this library is of course heavily inspired by the work of
