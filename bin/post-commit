@@ -2,13 +2,13 @@
 
 if [ $(git branch --no-color | grep '\*' | awk '{print $2}') = 'master' ]; then
     cp docs/* /tmp/
-    git checkout gh-pages 2>&1 1>/dev/null
+    git checkout gh-pages &>/dev/null
     cp /tmp/t.html index.html
     cp /tmp/docco.css ./
     if [ -n "$(git status --porcelain)" ]; then
         echo "Pusing documentation updates to http://aaronj1335.github.com/t-js"
         git commit -a -m 'documentation updates'
-        git push origin gh-pages 2>&1 1>/dev/null
+        git push origin gh-pages &>/dev/null
     fi
     git checkout master
 fi
