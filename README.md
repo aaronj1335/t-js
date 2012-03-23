@@ -169,6 +169,8 @@ it also makes use of the hard work by folks like
 [@tjholowaychuk](https://twitter.com/#!/tjholowaychuk), the jQuery team, and
 [@jakeluer](https://twitter.com/#!/jakeluer).
 
+license
+-------
 Copyright (C) 2011 Aaron Stacy
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
