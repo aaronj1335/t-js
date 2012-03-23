@@ -19,10 +19,12 @@ docs/t.html: t.js
 	docco $<
 
 
-repo: .git/hooks/pre-commit
+repo: .git/hooks/pre-commit .git/hooks/post-commit
 
 .git/hooks/pre-commit: bin/pre-commit
 	cp $< $@
 
+.git/hooks/post-commit: bin/post-commit
+	cp $< $@
 
 .PHONY: test web_test test_wrap
