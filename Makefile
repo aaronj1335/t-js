@@ -8,7 +8,7 @@ test_wrap:
 	./bin/sigwrap make test
 
 
-readme: README.md docs
+readme: README.md docs LICENSE
 
 README.md: t.js
 	grep '^\/\/' < $< | sed -E 's|^//[ ]?||' > $@
