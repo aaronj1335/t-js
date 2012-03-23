@@ -8,7 +8,7 @@ test_wrap:
 	./bin/sigwrap make test
 
 
-readme: README.md docs LICENSE
+readme: README.md docs license
 
 README.md: t.js
 	grep '^\/\/' < $< | sed -E 's|^//[ ]?||' > $@
@@ -19,6 +19,8 @@ docs: docs/t.html
 
 docs/t.html: t.js
 	docco $<
+
+license: LICENSE
 
 
 repo: .git/hooks/pre-commit .git/hooks/post-commit
