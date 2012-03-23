@@ -6,7 +6,7 @@ if [ $(git branch --no-color | grep '\*' | awk '{print $2}') = 'master' ]; then
     cp /tmp/t.html index.html
     cp /tmp/docco.css ./
     if [ -n "$(git status --porcelain)" ]; then
-        echo "Pusing documentation updates to http://aaronj1335.github.com/t-js"
+        echo "Pushing documentation updates to http://aaronj1335.github.com/t-js"
         git commit -a -m 'documentation updates'
         git push origin gh-pages &>/dev/null
     fi
