@@ -12,6 +12,8 @@ readme: README.md docs
 
 README.md: t.js
 	grep '^\/\/' < $< | sed -E 's|^//[ ]?||' > $@
+	echo >> $@
+	cat LICENSE >> $@
 
 docs: docs/t.html
 
