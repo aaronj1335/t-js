@@ -1,6 +1,0 @@
-#!/bin/sh
-
-if [ -f Makefile ]; then
-    make readme && git add docs/docco.css docs/t.html README.md
-    exit $?
-fi
