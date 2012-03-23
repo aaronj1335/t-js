@@ -1,4 +1,4 @@
-
+/*global expect:true, describe, it, beforeEach*/
 
 var pluck = function(key, arr) {
     var i, len, ret = [], cur = arr.length? arr[0] : undefined;
@@ -9,7 +9,7 @@ var pluck = function(key, arr) {
     return ret;
 };
 
-var print = function(t, level) {
+var printTree = function(t, level) {
     if (! t) return;
 
     if (typeof level === 'undefined')
@@ -20,7 +20,7 @@ var print = function(t, level) {
         ret = indent + t.name + '\n';
 
     for (var i = 0; i < len; i++)
-        ret += print(t.children[i], level + 1);
+        ret += printTree(t.children[i], level + 1);
 
     return ret;
 };
@@ -121,7 +121,7 @@ describe('t', function(){
     describe('map', function() {
         var makeNode = function(node, par) {
             if (par)
-                expect(par).to.include.keys('other');
+                expect(par).to.contain.keys('other');
 
             return {
                 name: node.name,
@@ -163,7 +163,7 @@ describe('t', function(){
     describe('filter', function() {
         var makeNode = function(node, par) {
             if (par)
-                expect(par).to.include.keys('other');
+                expect(par).to.contain.keys('other');
 
             if (node.name !== 'i' && node.name !== 'd')
                 return {
@@ -190,9 +190,9 @@ describe('t', function(){
         it('correctly handles immediate false return', function() {
             var tree2 = t.filter(tree, function() { return false; });
 
-            if (Object.prototype.toString.call(tree2) == '[object Array]')
+            if (Object.prototype.toString.call(tree2) === '[object Array]')
                 expect(tree2).to.eql([]);
-            if (Object.prototype.toString.call(tree2) == '[object Object]')
+            if (Object.prototype.toString.call(tree2) === '[object Object]')
                 expect(tree2).to.eql({});
             else
                 expect(tree2).to.equal(undefined);
