@@ -1,4 +1,4 @@
-<!DOCTYPE html>  <html> <head>   <title>t.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               t.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>version 0.3.1 (<a href="https://github.com/aaronj1335/t-js">source</a>)</p>
+<!DOCTYPE html>  <html> <head>   <title>t.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               t.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>version 0.3.0 (<a href="https://github.com/aaronj1335/t-js">source</a>)</p>
 
 <p>t-js is freely distributable under the MIT license</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>overview</h1>
 
@@ -64,6 +64,11 @@ library can be installed from <a href="http://search.npmjs.org/#/t">npm</a>:</p>
      /* ... */
  })
 </code></pre>
+
+<p>in the pre-order case, <code>dfs()</code> doesn't process child nodes until after the
+ callback.  so if you need to traverse an unknown tree, say a directory
+ structure, you can start with just the root, and add child nodes as you go
+ by appending them to <code>this.children</code> in the callback function.</p>
 
 <ul>
 <li><code>node</code>:

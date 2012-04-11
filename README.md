@@ -1,4 +1,4 @@
-version 0.3.1 ([source](https://github.com/aaronj1335/t-js))
+version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
@@ -53,6 +53,11 @@ perform a depth-first search, executing the given callback at each node.
      t.dfs(node, [config], function(node, par, ctrl) {
          /* ... */
      })
+
+ in the pre-order case, `dfs()` doesn't process child nodes until after the
+ callback.  so if you need to traverse an unknown tree, say a directory
+ structure, you can start with just the root, and add child nodes as you go
+ by appending them to `this.children` in the callback function.
 
 - `node`:
      object where the search will start.  this could also be an array of
