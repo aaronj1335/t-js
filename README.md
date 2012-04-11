@@ -1,4 +1,6 @@
-version 0.2.0 ([source](https://github.com/aaronj1335/t-js))
+version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
+
+t-js is freely distributable under the MIT license
 
 overview
 ========
@@ -16,6 +18,9 @@ traverses are made up of objects with 'children' arrays:
              }
          ]
      }
+
+ it's entirely non-recursive, including the post-order traversal and `map()`
+ functions.
 
 testing
 -------
@@ -38,9 +43,6 @@ from [`underscore.js`](http://documentcloud.github.com/underscore/)).  the
 library can be installed from [npm](http://search.npmjs.org/#/t):
 
     $ npm install t
-
-or included as an AMD library (via something like
-[`require.js`](http://requirejs.org/)) with the path `t`
 
 available functions
 ===================
@@ -157,7 +159,7 @@ truthy value
      - `node`: the current node
      - `par`: the parent of the current node
 
-t._dfsPostOrder()
+_dfsPostOrder()
 -----------------
 
 this is a module-private function used by `dfs()`

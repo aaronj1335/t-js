@@ -1,4 +1,6 @@
-// version 0.2.0 ([source](https://github.com/aaronj1335/t-js))
+// version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
+//
+// t-js is freely distributable under the MIT license
 //
 
 // overview
@@ -17,6 +19,9 @@
 //              }
 //          ]
 //      }
+//
+//  it's entirely non-recursive, including the post-order traversal and `map()`
+//  functions.
 //
 // testing
 // -------
@@ -43,10 +48,12 @@
 //
 //     $ npm install t
 //
-// or included as an AMD library (via something like
-// [`require.js`](http://requirejs.org/)) with the path `t`
-//
-var t = {};
+var _dfsPostOrder,
+    t = {},
+    root = this,
+    isArray = function(o) {
+        return Object.prototype.toString.call(o) == '[object Array]';
+    };
 
 /*global exports:true, module:true, define*/
 if (typeof exports !== 'undefined') {
@@ -54,15 +61,9 @@ if (typeof exports !== 'undefined') {
         exports = module.exports = t;
     }
     exports.t = t;
-} else if (typeof define === 'function' && define.amd) {
-    define('t', function() {
-        return t;
-    });
+} else {
+    root['t'] = t;
 }
-
-var isArray = function(o) {
-    return Object.prototype.toString.call(o) == '[object Array]';
-};
 
 
 // available functions
@@ -105,7 +106,7 @@ t.dfs = function() {
     if (typeof nodes[0] === 'undefined' && nodes.length === 1) return;
 
     if (config.order === 'post') {
-        ret = t._dfsPostOrder(nodes, config, callback);
+        ret = _dfsPostOrder(nodes, config, callback);
         return isArray(node)? ret : ret[0];
     }
 
@@ -303,11 +304,11 @@ t.find = function(tree, callback) {
 };
 
 
-// t._dfsPostOrder()
+// _dfsPostOrder()
 // -----------------
 //
 // this is a module-private function used by `dfs()`
-t._dfsPostOrder = function(nodes, config, callback) {
+_dfsPostOrder = function(nodes, config, callback) {
     var cur, par, ctrl, node, i,
         last = function(l) { return l[l.length-1]; },
         ret = [],
