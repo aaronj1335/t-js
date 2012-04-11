@@ -1,4 +1,4 @@
-// version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
+// version 0.3.1 ([source](https://github.com/aaronj1335/t-js))
 //
 // t-js is freely distributable under the MIT license
 //
@@ -95,6 +95,8 @@ if (typeof exports !== 'undefined') {
 //      - `ret`: return values of child nodes.  this is only set if `dfs()` is
 //      called with the `order` property set to `post`.
 //
+//  returns: the first `node` argument
+//
 t.dfs = function() {
     var cur, par, children, ctrl, i, ret, numArgs = arguments.length,
         node = arguments[0],
@@ -129,6 +131,8 @@ t.dfs = function() {
             parents.push(cur);
         }
     }
+
+    return node;
 };
 
 // t.map()
@@ -153,6 +157,8 @@ t.dfs = function() {
 //      - `node`: the current node
 //      - `par`: the current node's parent. note that this is the parent from
 //      the new tree that's being created.
+//
+//  returns: a new tree, mapped by the callback function
 //
 t.map = function() {
     var node = arguments[0],
@@ -226,6 +232,8 @@ t.map = function() {
 //      - `par`: the current node's parent. note that this is the parent from
 //      the new tree that's being created.
 //
+// returns: a new tree, filtered by the callback function
+//
 t.filter = function(node, nodeFactory) {
     return t.map(node, {filter: true}, nodeFactory);
 };
@@ -289,6 +297,8 @@ t.stroll = function(tree1, tree2, callback) {
 //      the arguments are:
 //      - `node`: the current node
 //      - `par`: the parent of the current node
+//
+// returns: the found node
 //
 t.find = function(tree, callback) {
     var found;

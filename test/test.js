@@ -115,6 +115,10 @@ describe('t', function(){
 
             expect(count).to.equal(0);
         });
+
+        it('returns the first arguments', function() {
+            expect(t.dfs(tree, function() { })).to.equal(tree);
+        });
     });
 
 

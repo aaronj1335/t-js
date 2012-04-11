@@ -1,4 +1,4 @@
-<!DOCTYPE html>  <html> <head>   <title>t.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               t.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>version 0.3.0 (<a href="https://github.com/aaronj1335/t-js">source</a>)</p>
+<!DOCTYPE html>  <html> <head>   <title>t.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               t.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>version 0.3.1 (<a href="https://github.com/aaronj1335/t-js">source</a>)</p>
 
 <p>t-js is freely distributable under the MIT license</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>overview</h1>
 
@@ -74,15 +74,18 @@ library can be installed from <a href="http://search.npmjs.org/#/t">npm</a>:</p>
  post-order traversal will be performed.  this is generally worse
  performance, but the <code>callback</code> has access to the return values of its
  child nodes.</li>
-<li><code>callback</code> (last argument):
- function to be executed at each node.  the arguments are:
+<li><p><code>callback</code> (last argument):
+ function to be executed at each node.  the arguments are:</p>
+
 <ul><li><code>node</code>: the current node</li>
 <li><code>par</code>: the current node's parent</li>
 <li><code>ctrl</code>: control object.  setting the <code>stop</code> property of this will end
 the search, setting the <code>cutoff</code> property of this will not visit any
 children of this node</li>
 <li><code>ret</code>: return values of child nodes.  this is only set if <code>dfs()</code> is
-called with the <code>order</code> property set to <code>post</code>.</li></ul></li>
+called with the <code>order</code> property set to <code>post</code>.</li></ul>
+
+<p>returns: the first <code>node</code> argument</p></li>
 </ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -117,6 +120,8 @@ called with the <code>order</code> property set to <code>post</code>.</li></ul><
             <span class="nx">parents</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
 <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>t.map()</h2>
 
 <p>given a tree, return a tree of the same structure made up of the objects
@@ -135,12 +140,15 @@ returned by the callback which is executed at each node.  think of the
 <li><code>config</code>:
  this is used for specifying things like pre/post order traversal
  (currently not implemented)</li>
-<li><code>callback</code> (last argument):
+<li><p><code>callback</code> (last argument):
  function to be executed at each node.  this must return an object.  the
- <code>map</code> function takes care of setting children.  the arguments are:
+ <code>map</code> function takes care of setting children.  the arguments are:</p>
+
 <ul><li><code>node</code>: the current node</li>
 <li><code>par</code>: the current node's parent. note that this is the parent from
-the new tree that's being created.</li></ul></li>
+the new tree that's being created.</li></ul>
+
+<p>returns: a new tree, mapped by the callback function</p></li>
 </ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="nx">numArgs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
@@ -212,7 +220,9 @@ of its descendents will be pruned from the output tree.</p>
 <ul><li><code>node</code>: the current node</li>
 <li><code>par</code>: the current node's parent. note that this is the parent from
 the new tree that's being created.</li></ul></li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">nodeFactory</span><span class="p">)</span> <span class="p">{</span>
+</ul>
+
+<p>returns: a new tree, filtered by the callback function</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">nodeFactory</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">{</span><span class="nx">filter</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span> <span class="nx">nodeFactory</span><span class="p">);</span>
 <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h2>t.stroll()</h2>
 
@@ -272,7 +282,9 @@ truthy value</p>
  the arguments are:
 <ul><li><code>node</code>: the current node</li>
 <li><code>par</code>: the parent of the current node</li></ul></li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+</ul>
+
+<p>returns: the found node</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">t</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">found</span><span class="p">;</span>
 
     <span class="nx">t</span><span class="p">.</span><span class="nx">dfs</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>

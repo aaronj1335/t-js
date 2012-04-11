@@ -1,4 +1,4 @@
-version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
+version 0.3.1 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
@@ -72,6 +72,8 @@ perform a depth-first search, executing the given callback at each node.
      - `ret`: return values of child nodes.  this is only set if `dfs()` is
      called with the `order` property set to `post`.
 
+ returns: the first `node` argument
+
 t.map()
 -------
 given a tree, return a tree of the same structure made up of the objects
@@ -95,6 +97,8 @@ returned by the callback which is executed at each node.  think of the
      - `par`: the current node's parent. note that this is the parent from
      the new tree that's being created.
 
+ returns: a new tree, mapped by the callback function
+
 t.filter()
 ----------
 given a tree, return a tree of the same structure made up of the objects
@@ -117,6 +121,8 @@ of its descendents will be pruned from the output tree.
      - `node`: the current node
      - `par`: the current node's parent. note that this is the parent from
      the new tree that's being created.
+
+returns: a new tree, filtered by the callback function
 
 t.stroll()
 ----------
@@ -158,6 +164,8 @@ truthy value
      the arguments are:
      - `node`: the current node
      - `par`: the parent of the current node
+
+returns: the found node
 
 _dfsPostOrder()
 -----------------
