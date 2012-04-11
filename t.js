@@ -21,7 +21,7 @@
 //      }
 //
 //  it's entirely non-recursive, including the post-order traversal and `map()`
-//  functions.
+//  functions, and it works inside the browser or out.
 //
 // testing
 // -------
