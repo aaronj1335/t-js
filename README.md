@@ -1,4 +1,4 @@
-version 0.3.0 ([source](https://github.com/aaronj1335/t-js))
+version 0.4.0 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
