@@ -40,7 +40,7 @@ describe('t', function(){
             cur = 0;
         });
 
-        it('correctly visit nodes', function() {
+        it('visits nodes in depth-first order', function() {
             t.dfs(tree, function(node, par) {
                 var expected = dict[node.name];
 
@@ -56,7 +56,7 @@ describe('t', function(){
             });
         });
 
-        it('sets "this" properly', function() {
+        it('sets "this" to the current node', function() {
             t.dfs(tree, function() {
                 expect(this.name).to.be.equal(order.dfs[cur++]);
             });
@@ -375,6 +375,66 @@ describe('t', function(){
             });
             expect(ret).to.eql(tree);
         });
+    });
+
+    describe('bfs', function() {
+        beforeEach(function() {
+            cur = 0;
+        });
+
+        it('visits nodes in breadth-first order', function() {
+            t.bfs(tree, function(node) {
+                var expected = dict[node.name];
+
+                expect(node.name).to.be.equal(order.bfs[cur++]);
+
+                expect(pluck('name', node.children||[]))
+                    .to.be.eql(expected.children);
+            });
+        });
+
+        it('sets "this" to the current node', function() {
+            t.bfs(tree, function(node) {
+                expect(this).to.equal(node);
+            });
+        });
+
+        it('correctly sets the parent in the callback', function() {
+            t.bfs(tree, function(node, par) {
+                var expected = dict[node.name];
+                expect(par? par.name : par).to.be.equal(expected.par);
+            });
+        });
+
+        it('correctly traverses list of nodes', function() {
+            var tree = data[1].tree,
+                dict = data[1].dict,
+                order = data[1].order;
+
+            t.bfs(tree, function(node, par) {
+                var expected = dict[node.name];
+
+                expect(node.name).to.be.equal(order.bfs[cur++]);
+
+                expect(pluck('name', node.children||[]))
+                    .to.be.eql(expected.children);
+            });
+        });
+
+        it('returns immediately if first arg is undefined', function() {
+            var count = 0;
+
+            t.bfs(undefined, function() {
+                count++;
+            });
+
+            expect(count).to.equal(0);
+        });
+
+        it('returns the first arguments', function() {
+            expect(t.bfs(tree, function() { })).to.equal(tree);
+        });
+
     });
 });
 

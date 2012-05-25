@@ -46,6 +46,27 @@ library can be installed from [npm](http://search.npmjs.org/#/t):
 
 available functions
 ===================
+t.bfs()
+-------
+perform a breadth-first search, executing the given callback at each node.
+
+     t.bfs(node, [config], function(node, par, ctrl) {
+         /* ... */
+     })
+
+- `node`:
+     object where the search will start.  this could also be an array of
+     objects
+- `config`:
+     this currently doesn't do anything for breadth-first searches
+- `callback` (last argument):
+     function to be executed at each node.  the arguments are:
+     - `node`: the current node
+     - `par`: the current node's parent
+     - `ctrl`: control object.  this doesn't currently do anything.
+
+ returns: the first `node` argument
+
 t.dfs()
 -------
 perform a depth-first search, executing the given callback at each node.

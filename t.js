@@ -69,6 +69,56 @@ if (typeof exports !== 'undefined') {
 // available functions
 // ===================
 
+// t.bfs()
+// -------
+// perform a breadth-first search, executing the given callback at each node.
+//
+//      t.bfs(node, [config], function(node, par, ctrl) {
+//          /* ... */
+//      })
+//
+// - `node`:
+//      object where the search will start.  this could also be an array of
+//      objects
+// - `config`:
+//      this currently doesn't do anything for breadth-first searches
+// - `callback` (last argument):
+//      function to be executed at each node.  the arguments are:
+//      - `node`: the current node
+//      - `par`: the current node's parent
+//      - `ctrl`: control object.  this doesn't currently do anything.
+//
+//  returns: the first `node` argument
+//
+t.bfs = function(node) {
+    var cur, config, callback, children, i, length, par,
+        queue = isArray(node)? node.slice(0) : [node],
+        parents = [undefined];
+
+    if (node == null) return node;
+
+    if (arguments.length >= 3) {
+        config = arguments[1];
+        callback = arguments[2];
+    } else {
+        config = {};
+        callback = arguments[1];
+    }
+
+    while (queue.length) {
+        cur = queue.shift();
+        par = parents.shift();
+        callback.call(cur, cur, par);
+        children = cur.children || [];
+        for (i = 0, length = children.length; i < length; i++) {
+            queue.push(children[i]);
+            parents.push(cur);
+        }
+    }
+
+    return node;
+};
+
 // t.dfs()
 // -------
 // perform a depth-first search, executing the given callback at each node.
@@ -102,9 +152,8 @@ if (typeof exports !== 'undefined') {
 //
 //  returns: the first `node` argument
 //
-t.dfs = function() {
+t.dfs = function(node) {
     var cur, par, children, ctrl, i, ret, numArgs = arguments.length,
-        node = arguments[0],
         nodes = isArray(node)? node.slice(0).reverse() : [node],
         config = numArgs === 3? arguments[1] : {},
         callback = arguments[numArgs === 3? 2 : 1],

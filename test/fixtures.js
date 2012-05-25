@@ -66,7 +66,8 @@ module.exports = [
         },
         order: {
             dfs: 'a b c d e f g h i j k l m'.split(' '),
-            dfsPost: 'c e f d g i h b j l m k a'.split(' ')
+            dfsPost: 'c e f d g i h b j l m k a'.split(' '),
+            bfs: 'a b j k c d g h l m e f i'.split(' ')
         }
     },
 
@@ -96,7 +97,8 @@ module.exports = [
         },
         order: {
             dfs: 'a b c d'.split(' '),
-            dfsPost: 'b c a d'.split(' ')
+            dfsPost: 'b c a d'.split(' '),
+            bfs: 'a d b c'.split(' ')
         }
     },
     {
