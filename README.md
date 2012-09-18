@@ -207,7 +207,7 @@ it also makes use of the hard work by folks like
 
 license
 -------
-Copyright (C) 2011 Aaron Stacy
+Copyright (C) 2012 Aaron Stacy
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
