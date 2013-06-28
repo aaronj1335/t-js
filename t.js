@@ -91,9 +91,12 @@ if (typeof exports !== 'undefined') {
 //  returns: the first `node` argument
 //
 t.bfs = function(node) {
-    var cur, config, callback, children, i, length, par,
+
+    var cur, callback, i, length, par,
+        config = arguments.length === 3? arguments[1] : {},
         queue = isArray(node)? node.slice(0) : [node],
-        parents = [undefined];
+        parents = [undefined],
+        childrenName = _getChildrenName( config );
 
     if (node == null) return node;
 
@@ -109,7 +112,7 @@ t.bfs = function(node) {
         cur = queue.shift();
         par = parents.shift();
         callback.call(cur, cur, par);
-        children = cur.children || [];
+        children = cur[childrenName] || [];
         for (i = 0, length = children.length; i < length; i++) {
             queue.push(children[i]);
             parents.push(cur);
@@ -157,14 +160,16 @@ t.dfs = function(node) {
         nodes = isArray(node)? node.slice(0).reverse() : [node],
         config = numArgs === 3? arguments[1] : {},
         callback = arguments[numArgs === 3? 2 : 1],
-        parents = [];
-
+        parents = [],
+        childrenName = _getChildrenName( config );
+       
     if (typeof nodes[0] === 'undefined' && nodes.length === 1) return;
 
     if (config.order === 'post') {
         ret = _dfsPostOrder(nodes, config, callback);
         return isArray(node)? ret : ret[0];
     }
+
 
     for (i = nodes.length-1; i >= 0; i--)
         parents.push(undefined);
@@ -178,7 +183,7 @@ t.dfs = function(node) {
 
         if (ctrl.stop) break;
 
-        children = (cur && cur.children)? cur.children : [];
+        children = (cur && cur[childrenName])? cur[childrenName] : [];
 
         for (i = ctrl.cutoff? -1 : children.length-1; i >= 0; i--) {
             nodes.push(children[i]);
@@ -222,18 +227,19 @@ t.map = function() {
         nodeFactory = arguments[numArgs === 3? 2 : 1],
         ret = isArray(node)? [] : undefined,
         last = function(l) { return l[l.length-1]; },
-        parentStack = [];
-
-    t.dfs(node, function(n, par, ctrl) {
+        parentStack = [],
+        childrenName = _getChildrenName( config );
+  
+    t.dfs(node, config, function(n, par, ctrl) {
         var curParent = last(parentStack),
             newNode = nodeFactory(n, curParent? curParent.ret : undefined);
 
         if (filter && ! newNode) {
             ctrl.cutoff = true;
-            if (curParent && n === last(curParent.n.children)) {
+            if (curParent && n === last(curParent.n[childrenName])) {
                 parentStack.pop();
-                if (curParent.ret.children && ! curParent.ret.children.length)
-                    delete curParent.ret.children;
+                if (curParent.ret[childrenName] && ! curParent.ret[childrenName].length)
+                    delete curParent.ret[childrenName];
             }
             return;
         }
@@ -245,17 +251,17 @@ t.map = function() {
                 ret = newNode;
 
         } else {
-            curParent.ret.children.push(newNode);
+            curParent.ret[childrenName].push(newNode);
 
             if (n === last(curParent.n.children)) {
                 parentStack.pop();
-                if (curParent.ret.children && ! curParent.ret.children.length)
-                    delete curParent.ret.children;
+                if (curParent.ret[childrenName] && ! curParent.ret[childrenName].length)
+                    delete curParent.ret[childrenName];
             }
         }
 
-        if (n.children && n.children.length) {
-            newNode.children = [];
+        if (n[childrenName] && n[childrenName].length) {
+            newNode[childrenName] = [];
             parentStack.push({n: n, ret: newNode});
         }
     });
@@ -289,7 +295,11 @@ t.map = function() {
 // returns: a new tree, filtered by the callback function
 //
 t.filter = function(node, nodeFactory) {
-    return t.map(node, {filter: true}, nodeFactory);
+    var config = arguments.length === 3 ? arguments[1] : {};
+    return t.map(node, {
+        filter: true,
+        childrenName: config.childrenName
+    }, nodeFactory);
 };
 
 // t.stroll()
@@ -316,17 +326,19 @@ t.filter = function(node, nodeFactory) {
 //
 t.stroll = function(tree1, tree2, callback) {
     var i, children, node2,
+        config = arguments.length === 4 ? arguments[2] : {},
+        childrenName = _getChildrenName( config ),
         nodes2 = isArray(tree2)? tree2.slice(0).reverse() : [tree2],
         len = function(a) { return typeof a === 'undefined'? 0 : a.length; };
-
-    t.dfs(tree1, function(node1, par, ctrl) {
+      
+    t.dfs(tree1, config, function(node1, par, ctrl) {
         node2 = nodes2.pop();
 
         callback(node1, node2);
 
-        if (node1 && node2 && len(node1.children) === len(node2.children))
-            for (i = (node2.children || []).length-1; i >= 0; i--)
-                nodes2.push(node2.children[i]);
+        if (node1 && node2 && len(node1[childrenName]) === len(node2[childrenName]))
+            for (i = (node2[childrenName] || []).length-1; i >= 0; i--)
+                nodes2.push(node2[childrenName][i]);
         else
             ctrl.cutoff = true;
 
@@ -355,9 +367,11 @@ t.stroll = function(tree1, tree2, callback) {
 // returns: the found node
 //
 t.find = function(tree, callback) {
-    var found;
-
-    t.dfs(tree, function(node, par, ctrl) {
+    var found,
+        config = arguments.length === 3 ? {} : arguments[1],
+        childrenName = _getChildrenName( config );
+        
+    t.dfs(tree, config, function(node, par, ctrl) {
         if (callback.call(node, node, par)) {
             ctrl.stop = true;
             found = this;
@@ -367,7 +381,10 @@ t.find = function(tree, callback) {
     return found;
 };
 
-
+_getChildrenName = function ( config ) {
+    
+   return config.childrenName || 'children';
+};
 // _dfsPostOrder()
 // -----------------
 //
@@ -380,16 +397,17 @@ _dfsPostOrder = function(nodes, config, callback) {
             node: nodes.pop(),
             index: 0,
             ret: []
-        }];
+        }],
+        childrenName = _getChildrenName( config );
 
     while (stack.length) {
         cur = last(stack);
         node = cur.node;
 
-        if (node.children && node.children.length) {
-            if (cur.index < node.children.length) {
+        if (node[childrenName] && node[childrenName].length) {
+            if (cur.index < node[childrenName].length) {
                 stack.push({
-                    node: node.children[cur.index++],
+                    node: node[childrenName][cur.index++],
                     index: 0,
                     ret: []
                 });
