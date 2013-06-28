@@ -132,5 +132,74 @@ module.exports = [
             dfs: 'a b j k l'.split(' '),
             dfsPost: 'b j l k a'.split(' ')
         }
+    },
+    {
+        tree: {
+            name: 'a',
+            custom_children_name: [
+                {
+                    name: 'b',
+                    custom_children_name: [
+                        {
+                            name: 'c'
+                        },
+                        {
+                            name: 'd',
+                            do_not_take_this: [
+                                {
+                                    name: 'e'
+                                },
+                                {
+                                    name: 'f'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'g'
+                        },
+                        {
+                            name: 'h',
+                            custom_children_name: [
+                                {
+                                    name: 'i'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'j'
+                },
+                {
+                    name: 'k',
+                    custom_children_name: [
+                        {
+                            name: 'l'
+                        },
+                        {
+                            name: 'm'
+                        }
+                    ]
+                }
+            ]
+        },
+        dict: {
+            'a': {par: undefined,   children: ['b', 'j', 'k']},
+            'b': {par: 'a',         children: ['c', 'd', 'g', 'h']},
+            'c': {par: 'b',         children: []},
+            'd': {par: 'b',         children: []},
+            'g': {par: 'b',         children: []},
+            'h': {par: 'b',         children: ['i']},
+            'i': {par: 'h',         children: []},
+            'j': {par: 'a',         children: []},
+            'k': {par: 'a',         children: ['l', 'm']},
+            'l': {par: 'k',         children: []},
+            'm': {par: 'k',         children: []}
+        },
+        order: {
+            dfs: 'a b c d g h i j k l m'.split(' '),
+            dfsPost: 'c d g i h b j l m k a'.split(' '),
+            bfs: 'a b j k c d g h l m i'.split(' ')
+        }
     }
 ];
