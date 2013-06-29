@@ -8,11 +8,11 @@
 <head>
   <meta charset=utf-8>
 
-  
+
   <meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1">
 
   <title>Tree traversal library</title>
-  
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
 
   <link rel=stylesheet href='node_modules/mocha/mocha.css'>
@@ -28,11 +28,11 @@
   <script>
     function define(name, callback) { window[name] = callback(); };
     function require(name) {
-      if (name === 'chai')
+      if (/chai/.test(name))
         return chai;
-      else if (name === 'test/fixtures')
+      else if (/fixtures/.test(name))
         return window.fixtures;
-      else if (name === 't')
+      else if (/t$/.test(name))
         return window.t;
     };
     define.amd = true;

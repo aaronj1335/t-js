@@ -1,4 +1,4 @@
-// version 0.4.0 ([source](https://github.com/aaronj1335/t-js))
+// version 0.5.0 ([source](https://github.com/aaronj1335/t-js))
 //
 // t-js is freely distributable under the MIT license
 //
@@ -20,31 +20,29 @@
 //          ]
 //      }
 //
-//  it's entirely non-recursive, including the post-order traversal and `map()`
-//  functions, and it works inside the browser or out.
+//  the actual property name is configurable. the traversals are entirely
+//  non-recursive, including the post-order traversal and `map()` functions,
+//  and it works inside the browser or out.
 //
 // testing
 // -------
-// unit tests are provided courtesy of
-// [`mocha.js`](http://visionmedia.github.com/mocha/) and
-// [`chai`](http://chaijs.com/).  on a unix system they can be run from the
-// command line with:
+// there's a bunch of tests in `test/test.js`. you can run them along with the
+// linter with:
 //
-//      $ make test
+//     $ npm install && npm test
 //
-// or viewed in most any system with a modern browser by opening the
+// or view them on most any system with a modern browser by opening the
 // `index.html` file.
 //
-// documentation is generated with the `make readme` target.
+// documentation is generated with the `grunt docs` target.
 //
 (function() {
 
 
 // usage
 // -----
-// the `t` interface is exported in either the browser or node.js.  (got this
-// from [`underscore.js`](http://documentcloud.github.com/underscore/)).  the
-// library can be installed from [npm](http://search.npmjs.org/#/t):
+// the `t` interface is exported in either the browser or node.js. the library
+// can be installed from [npm](http://search.npmjs.org/#/t):
 //
 //     $ npm install t
 //
@@ -52,20 +50,18 @@ var _dfsPostOrder,
     t = {},
     root = this,
     isArray = function(o) {
-        return Object.prototype.toString.call(o) == '[object Array]';
+        return Object.prototype.toString.call(o) === '[object Array]';
     },
     getChildrenName = function ( config ) {
        return config.childrenName || 'children';
     };
 
-/*global exports:true, module:true, define*/
 if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
+    if (typeof module !== 'undefined' && module.exports)
         exports = module.exports = t;
-    }
     exports.t = t;
 } else {
-    root['t'] = t;
+    root.t = t;
 }
 
 
@@ -84,7 +80,8 @@ if (typeof exports !== 'undefined') {
 //      object where the search will start.  this could also be an array of
 //      objects
 // - `config`:
-//      this currently doesn't do anything for breadth-first searches
+//      you can define the name of the children property with
+//      `config.childrenName` (shoutout to @GianlucaGuarini)
 // - `callback` (last argument):
 //      function to be executed at each node.  the arguments are:
 //      - `node`: the current node
@@ -95,7 +92,7 @@ if (typeof exports !== 'undefined') {
 //
 t.bfs = function(node) {
 
-    var cur, callback, i, length, par,
+    var cur, callback, i, length, par, children,
         isConfigSet = arguments.length === 3,
         config = isConfigSet ? arguments[1] : {},
         queue = isArray(node)? node.slice(0) : [node],
@@ -146,7 +143,8 @@ t.bfs = function(node) {
 //      if this is an object w/ the 'order' property set to 'post', a
 //      post-order traversal will be performed.  this is generally worse
 //      performance, but the `callback` has access to the return values of its
-//      child nodes.
+//      child nodes. you can define the name of the children property with
+//      `config.childrenName`
 // - `callback` (last argument):
 //      function to be executed at each node.  the arguments are:
 //      - `node`: the current node
@@ -212,8 +210,8 @@ t.dfs = function(node) {
 //      object where the traversal will start.  this could also be an array of
 //      objects
 // - `config`:
-//      this is used for specifying things like pre/post order traversal
-//      (currently not implemented)
+//      you can define the name of the children property with
+//      `config.childrenName`
 // - `callback` (last argument):
 //      function to be executed at each node.  this must return an object.  the
 //      `map` function takes care of setting children.  the arguments are:
@@ -242,7 +240,8 @@ t.map = function() {
             ctrl.cutoff = true;
             if (curParent && n === last(curParent.n[childrenName])) {
                 parentStack.pop();
-                if (curParent.ret[childrenName] && ! curParent.ret[childrenName].length)
+                if (curParent.ret[childrenName] &&
+                        ! curParent.ret[childrenName].length)
                     delete curParent.ret[childrenName];
             }
             return;
@@ -259,7 +258,8 @@ t.map = function() {
 
             if (n === last(curParent.n[childrenName])) {
                 parentStack.pop();
-                if (curParent.ret[childrenName] && ! curParent.ret[childrenName].length)
+                if (curParent.ret[childrenName] &&
+                        ! curParent.ret[childrenName].length)
                     delete curParent.ret[childrenName];
             }
         }
@@ -280,13 +280,16 @@ t.map = function() {
 // given node the callback returns a falsy value, then the current node and all
 // of its descendents will be pruned from the output tree.
 //
-//      t.filter(node, function(node, par) {
+//      t.filter(node, [config], function(node, par) {
 //          /* ... */
 //      })
 //
 // - `node`:
 //      object where the traversal will start.  this could also be an array of
 //      objects
+// - `config`:
+//      you can define the name of the children property with
+//      `config.childrenName`
 // - `callback` (last argument):
 //      function to be executed at each node.  this must return an object or a
 //      falsy value if the output tree should be pruned from the current node
@@ -300,7 +303,7 @@ t.map = function() {
 //
 t.filter = function(node) {
     var isConfigSet = arguments.length === 3,
-        nodeFactory =  arguments[isConfigSet ? 2 : 1];
+        nodeFactory =  arguments[isConfigSet ? 2 : 1],
         config = isConfigSet ? arguments[1] : {};
     return t.map(node, {
         filter: true,
@@ -317,7 +320,7 @@ t.filter = function(node) {
 // executing the given callback with the pair of corresponding nodes as
 // arguments.
 //
-//      t.stroll(tree1, tree2, function(node1, node2) {
+//      t.stroll(tree1, tree2, [config], function(node1, node2) {
 //          /* ... */
 //      })
 //
@@ -325,26 +328,30 @@ t.filter = function(node) {
 //      the first tree of the traversal
 // - `node2`:
 //      the second tree of the traversal
+// - `config`:
+//      you can define the name of the children property with
+//      `config.childrenName`
 // - `callback` (last argument):
 //      function to be executed at each node. the arguments are:
 //      - `node1`: the node from the first tree
 //      - `node2`: the node from the second tree
 //
 t.stroll = function(tree1, tree2) {
-    var i, children, node2,
+    var i, node2,
         isConfigSet = arguments.length === 4,
         callback =  arguments[ isConfigSet ? 3 : 2],
         config = isConfigSet ? arguments[2] : {},
         childrenName = getChildrenName(config),
         nodes2 = isArray(tree2)? tree2.slice(0).reverse() : [tree2],
         len = function(a) { return typeof a === 'undefined'? 0 : a.length; };
-      
+
     t.dfs(tree1, config, function(node1, par, ctrl) {
         node2 = nodes2.pop();
 
         callback(node1, node2);
 
-        if (node1 && node2 && len(node1[childrenName]) === len(node2[childrenName]))
+        if (node1 && node2 &&
+                len(node1[childrenName]) === len(node2[childrenName]))
             for (i = (node2[childrenName] || []).length-1; i >= 0; i--)
                 nodes2.push(node2[childrenName][i]);
         else
@@ -359,12 +366,15 @@ t.stroll = function(tree1, tree2) {
 // given a tree and a truth test, return the first node that responds with a
 // truthy value
 //
-//      t.find(tree, function(node, par) {
+//      t.find(tree, [config], function(node, par) {
 //          /* ... */
 //      })
 //
 // - `tree`:
 //      the tree in which to find the node
+// - `config`:
+//      you can define the name of the children property with
+//      `config.childrenName`
 // - `callback` (last argument):
 //      function to be executed at each node. if this function returns a truthy
 //      value, the traversal will stop and `find` will return the current node.
@@ -380,7 +390,6 @@ t.find = function( tree ) {
         callback =  arguments[ isConfigSet ? 2 : 1],
         config = isConfigSet ? arguments[1] : {};
     t.dfs(tree, config, function(node, par, ctrl) {
-
         if (callback.call(node, node, par)) {
             ctrl.stop = true;
             found = this;
@@ -395,7 +404,7 @@ t.find = function( tree ) {
 //
 // this is a module-private function used by `dfs()`
 _dfsPostOrder = function(nodes, config, callback) {
-    var cur, par, ctrl, node, i,
+    var cur, par, ctrl, node,
         last = function(l) { return l[l.length-1]; },
         ret = [],
         stack = [{
@@ -439,13 +448,5 @@ _dfsPostOrder = function(nodes, config, callback) {
 
     return ret;
 };
-
-// credits
-// -------
-// this library is of course heavily inspired by the work of
-// [@jashkenas](https://twitter.com/#!/jashkenas) and others on `underscore`.
-// it also makes use of the hard work by folks like
-// [@tjholowaychuk](https://twitter.com/#!/tjholowaychuk), the jQuery team, and
-// [@jakeluer](https://twitter.com/#!/jakeluer).
 
 }());

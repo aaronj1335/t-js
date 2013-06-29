@@ -1,6 +1,3 @@
-test: 
-	./node_modules/.bin/mocha --reporter list
-
 web_test:
 	open index.html
 

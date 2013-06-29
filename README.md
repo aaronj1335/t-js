@@ -1,4 +1,4 @@
-version 0.4.0 ([source](https://github.com/aaronj1335/t-js))
+version 0.5.0 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
@@ -19,28 +19,26 @@ traverses are made up of objects with 'children' arrays:
          ]
      }
 
- it's entirely non-recursive, including the post-order traversal and `map()`
- functions, and it works inside the browser or out.
+ the actual property name is configurable. the traversals are entirely
+ non-recursive, including the post-order traversal and `map()` functions,
+ and it works inside the browser or out.
 
 testing
 -------
-unit tests are provided courtesy of
-[`mocha.js`](http://visionmedia.github.com/mocha/) and
-[`chai`](http://chaijs.com/).  on a unix system they can be run from the
-command line with:
+there's a bunch of tests in `test/test.js`. you can run them along with the
+linter with:
 
-     $ make test
+    $ npm install && npm test
 
-or viewed in most any system with a modern browser by opening the
+or view them on most any system with a modern browser by opening the
 `index.html` file.
 
-documentation is generated with the `make readme` target.
+documentation is generated with the `grunt docs` target.
 
 usage
 -----
-the `t` interface is exported in either the browser or node.js.  (got this
-from [`underscore.js`](http://documentcloud.github.com/underscore/)).  the
-library can be installed from [npm](http://search.npmjs.org/#/t):
+the `t` interface is exported in either the browser or node.js. the library
+can be installed from [npm](http://search.npmjs.org/#/t):
 
     $ npm install t
 
@@ -58,7 +56,8 @@ perform a breadth-first search, executing the given callback at each node.
      object where the search will start.  this could also be an array of
      objects
 - `config`:
-     this currently doesn't do anything for breadth-first searches
+     you can define the name of the children property with
+     `config.childrenName` (shoutout to @GianlucaGuarini)
 - `callback` (last argument):
      function to be executed at each node.  the arguments are:
      - `node`: the current node
@@ -87,7 +86,8 @@ perform a depth-first search, executing the given callback at each node.
      if this is an object w/ the 'order' property set to 'post', a
      post-order traversal will be performed.  this is generally worse
      performance, but the `callback` has access to the return values of its
-     child nodes.
+     child nodes. you can define the name of the children property with
+     `config.childrenName`
 - `callback` (last argument):
      function to be executed at each node.  the arguments are:
      - `node`: the current node
@@ -114,8 +114,8 @@ returned by the callback which is executed at each node.  think of the
      object where the traversal will start.  this could also be an array of
      objects
 - `config`:
-     this is used for specifying things like pre/post order traversal
-     (currently not implemented)
+     you can define the name of the children property with
+     `config.childrenName`
 - `callback` (last argument):
      function to be executed at each node.  this must return an object.  the
      `map` function takes care of setting children.  the arguments are:
@@ -132,13 +132,16 @@ returned by the callback which is executed at each node.  if, however, at a
 given node the callback returns a falsy value, then the current node and all
 of its descendents will be pruned from the output tree.
 
-     t.filter(node, function(node, par) {
+     t.filter(node, [config], function(node, par) {
          /* ... */
      })
 
 - `node`:
      object where the traversal will start.  this could also be an array of
      objects
+- `config`:
+     you can define the name of the children property with
+     `config.childrenName`
 - `callback` (last argument):
      function to be executed at each node.  this must return an object or a
      falsy value if the output tree should be pruned from the current node
@@ -159,7 +162,7 @@ given two trees of similar structure, traverse both trees at the same time,
 executing the given callback with the pair of corresponding nodes as
 arguments.
 
-     t.stroll(tree1, tree2, function(node1, node2) {
+     t.stroll(tree1, tree2, [config], function(node1, node2) {
          /* ... */
      })
 
@@ -167,6 +170,9 @@ arguments.
      the first tree of the traversal
 - `node2`:
      the second tree of the traversal
+- `config`:
+     you can define the name of the children property with
+     `config.childrenName`
 - `callback` (last argument):
      function to be executed at each node. the arguments are:
      - `node1`: the node from the first tree
@@ -178,12 +184,15 @@ t.find()
 given a tree and a truth test, return the first node that responds with a
 truthy value
 
-     t.find(tree, function(node, par) {
+     t.find(tree, [config], function(node, par) {
          /* ... */
      })
 
 - `tree`:
      the tree in which to find the node
+- `config`:
+     you can define the name of the children property with
+     `config.childrenName`
 - `callback` (last argument):
      function to be executed at each node. if this function returns a truthy
      value, the traversal will stop and `find` will return the current node.
@@ -197,17 +206,10 @@ _dfsPostOrder()
 -----------------
 
 this is a module-private function used by `dfs()`
-credits
--------
-this library is of course heavily inspired by the work of
-[@jashkenas](https://twitter.com/#!/jashkenas) and others on `underscore`.
-it also makes use of the hard work by folks like
-[@tjholowaychuk](https://twitter.com/#!/tjholowaychuk), the jQuery team, and
-[@jakeluer](https://twitter.com/#!/jakeluer).
 
 license
 -------
-Copyright (C) 2012 Aaron Stacy
+Copyright (C) 2012 StoredIQ, Authored by Aaron Stacy
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

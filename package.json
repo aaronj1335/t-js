@@ -2,14 +2,23 @@
   "name": "t",
   "description": "tree traversal and manipulation",
   "author": "Aaron Stacy <aaron.r.stacy@gmail.com>",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "devDependencies": {
     "mocha": "0.10.x",
     "underscore": "1.2.x",
-    "docco": "0.3.x",
-    "chai": "0.1.x"
+    "docco": "~0.6.2",
+    "chai": "0.1.x",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-mocha": "~0.3.4",
+    "grunt-mocha-test": "~0.5.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-shell": "~0.3.0"
   },
   "main": "t.js",
+  "scripts": {
+    "test": "grunt test"
+  },
   "engine": "node >= 0.6.0",
   "dependencies": {},
   "optionalDependencies": {},

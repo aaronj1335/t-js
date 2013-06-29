@@ -1,0 +1,25 @@
+{
+    "browser": true,
+    "bitwise": true,
+    "curly": false,
+    "eqeqeq": true,
+    "eqnull": true,
+    "forin": true,
+    "immed": true,
+    "latedef": true,
+    "noarg": true,
+    "noempty": true,
+    "nonew": true,
+    "quotmark": true,
+    "trailing": true,
+    "undef": true,
+    "unused": true,
+    "maxlen": 80,
+    "globals": {
+        "require": false,
+        "exports": true,
+        "module": false
+    }
+}
+
+
