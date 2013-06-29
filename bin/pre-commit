@@ -2,4 +2,5 @@
 
 [ -d node_modules ] || npm install
 npm test
-
+grunt docs
+git add README.md

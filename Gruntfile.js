@@ -7,22 +7,18 @@ module.exports = function(grunt) {
         mochaTest: {
             '.unit-test-results.tmp': ['test/**/*.js']
         },
-        copy: {
-            hooks: {
-                files: [
-                    {expand: true, src: 'bin/*commit', dest: '.git/hooks/'}
-                ]
-            }
-        },
         shell: {
             docs: {
                 command: 'bin/make-docs'
+            },
+            reposetup: {
+                command:
+                    'chmod +x bin/pre-commit && cp bin/pre-commit .git/hooks/'
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-shell');
 
