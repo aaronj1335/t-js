@@ -27,7 +27,8 @@ var printTree = function(t, level) {
 
 var t = require('t'),
     expect = require('chai').expect,
-    data = require('test/fixtures');
+    data = require('test/fixtures'),
+    data = require('test/fixtures_custom_ch');
 
 describe('t', function(){
     var tree = data[0].tree,
