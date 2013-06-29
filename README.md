@@ -2,6 +2,8 @@ version 0.5.0 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
+<img src="https://api.travis-ci.org/aaronj1335/t-js.png?branch=master">
+
 overview
 ========
 t.js is a tree-traversal library.  its only assumption is that the trees it

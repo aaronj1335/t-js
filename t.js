@@ -2,6 +2,8 @@
 //
 // t-js is freely distributable under the MIT license
 //
+// <img src="https://api.travis-ci.org/aaronj1335/t-js.png?branch=master">
+//
 
 // overview
 // ========
