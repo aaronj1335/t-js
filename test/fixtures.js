@@ -184,24 +184,22 @@ module.exports = [
             ]
         },
         dict: {
-            'a': {par: undefined,   custom_children_name: ['b', 'j', 'k']},
-            'b': {par: 'a',         custom_children_name: ['c', 'd', 'g', 'h']},
-            'c': {par: 'b',         custom_children_name: []},
-            'd': {par: 'b',         custom_children_name: ['e', 'f']},
-            'e': {par: 'd',         custom_children_name: []},
-            'f': {par: 'd',         custom_children_name: []},
-            'g': {par: 'b',         custom_children_name: []},
-            'h': {par: 'b',         custom_children_name: ['i']},
-            'i': {par: 'h',         custom_children_name: []},
-            'j': {par: 'a',         custom_children_name: []},
-            'k': {par: 'a',         custom_children_name: ['l', 'm']},
-            'l': {par: 'k',         custom_children_name: []},
-            'm': {par: 'k',         custom_children_name: []}
+            'a': {par: undefined,   children: ['b', 'j', 'k']},
+            'b': {par: 'a',         children: ['c', 'd', 'g', 'h']},
+            'c': {par: 'b',         children: []},
+            'd': {par: 'b',         children: []},
+            'g': {par: 'b',         children: []},
+            'h': {par: 'b',         children: ['i']},
+            'i': {par: 'h',         children: []},
+            'j': {par: 'a',         children: []},
+            'k': {par: 'a',         children: ['l', 'm']},
+            'l': {par: 'k',         children: []},
+            'm': {par: 'k',         children: []}
         },
         order: {
-            dfs: 'a b c d e f g h i j k l m'.split(' '),
-            dfsPost: 'c e f d g i h b j l m k a'.split(' '),
-            bfs: 'a b j k c d g h l m e f i'.split(' ')
+            dfs: 'a b c d g h i j k l m'.split(' '),
+            dfsPost: 'c d g i h b j l m k a'.split(' '),
+            bfs: 'a b j k c d g h l m i'.split(' ')
         }
     }
 ];

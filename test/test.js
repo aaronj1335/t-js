@@ -27,8 +27,7 @@ var printTree = function(t, level) {
 
 var t = require('t'),
     expect = require('chai').expect,
-    data = require('test/fixtures'),
-    data = require('test/fixtures_custom_ch');
+    data = require('test/fixtures');
 
 describe('t', function(){
     var tree = data[0].tree,
@@ -437,5 +436,173 @@ describe('t', function(){
         });
 
     });
+
+    describe('Custom children names',function(){
+        var ret,
+            tree = data[3].tree,
+            dict = data[3].dict,
+            order = data[3].order,
+            config = {childrenName: 'custom_children_name'};
+        describe('dfs', function() {
+            beforeEach(function() {
+                cur = 0;
+            });
+
+            it('correct output order (no post)', function() {
+                t.dfs(tree, config, function() {
+                    expect(this.name).to.be.equal(order.dfs[cur++]);
+                });
+            });
+
+            it('correct output order (post)', function() {
+                t.dfs(tree, {childrenName: config.childrenName, order:'post'}, function() {
+                    expect(this.name).to.be.equal(order.dfsPost[cur++]);
+                });
+            });
+        });
+        describe('map', function() {
+            var makeNode = function(node, par) {
+                if (par)
+                    expect(par).to.contain.keys('other');
+                return {
+                    name: node.name,
+                    other: 'some other prop for ' + node.name,
+                    par: par
+                };
+            };
+        
+            it('correctly creates a new tree', function() {
+                var tree = t.map(tree, makeNode);
+                t.dfs(tree, function(node, par) {
+                    expect(node.other)
+                        .to.be.equal('some other prop for ' + node.name);
+                    expect(node).to.not.equal(dict[node.name]);
+                    if (node.par)
+                        expect(node.par.name).to.be.equal(par.name);
+                    else
+                        expect(par).to.equal(undefined);
+                });
+            });
+
+        });
+        describe('filter', function() {
+            var makeNode = function(node, par) {
+                if (par)
+                    expect(par).to.contain.keys('other');
+
+                if (node.name !== 'i' && node.name !== 'd')
+                    return {
+                        name: node.name,
+                        other: 'some other prop for ' + node.name,
+                        par: par
+                    };
+            };
+
+            it('correctly filters nodes that return false', function() {
+                var tree2 = t.filter(tree, config , makeNode);
+                var expected = 'a b c g h j k l m'.split(' ');
+                var found = [];
+                t.dfs(tree2, config, function() {
+
+                    found.push(this.name);
+                    if (this.par)
+                        expect(this.par.name).to.be.equal(dict[this.name].par);
+                    else
+                        expect(dict[this.name].par).to.equal(undefined);
+                });
+                expect(found).to.be.eql(expected);
+            });
+
+            it('correctly handles immediate false return', function() {
+                var tree2 = t.filter(tree,config, function() { return false; });
+
+                if (Object.prototype.toString.call(tree2) === '[object Array]')
+                    expect(tree2).to.eql([]);
+                if (Object.prototype.toString.call(tree2) === '[object Object]')
+                    expect(tree2).to.eql({});
+                else
+                    expect(tree2).to.equal(undefined);
+            });
+
+            it('correctly removes children arrays', function() {
+                var tree2 = t.filter(tree,config, makeNode), correct = false;
+                t.dfs(tree2, function() {
+                    if (this.name === 'h')
+                        expect(this.children).to.equal(undefined);
+                });
+            });
+
+        });
+        describe('stroll', function() {
+            // returns true if tree1 is a non-strict subset of tree2
+            var isSubset = function(tree1, tree2) {
+                var subset = true;
+
+                t.stroll(tree1, tree2, function(node1, node2) {
+                    if (node1.name !== node2.name)
+                        subset = false;
+
+                    var node2Children = node2.children?
+                        pluck('name', node2.children) : [];
+
+                    if (node1.children)
+                        node1.children.forEach(function(n, i) {
+                            if (node2Children.indexOf(n.name) < 0)
+                                subset = false;
+                        });
+                });
+
+                return subset;
+            };
+
+            it('correctly walks through two trees', function() {
+                var copy = t.map(tree, config, function(n) {
+                    return {name: n.name, other: 'this is node '+n.name};
+                });
+
+                t.stroll(tree, copy, config, function(first, second) {
+                    expect(first).to.not.equal(second);
+                    expect(first.name).to.equal(second.name);
+                    expect(second.other).to.equal('this is node '+second.name);
+                });
+
+                t.stroll(copy, tree, config, function(first, second) {
+                    expect(first).to.not.equal(second);
+                    expect(first.name).to.equal(second.name);
+                    expect(first.other).to.equal('this is node '+first.name);
+                });
+            });
+
+            it('correctly walks through a subset tree', function() {
+                expect(isSubset(data[2].tree, data[0].tree)).to.be.true;
+            });
+
+            it('correctly walks through a superset tree', function() {
+                expect(isSubset(data[0].tree, data[2].tree)).to.be.false;
+            });
+        });
+        describe('bfs', function() {
+            beforeEach(function() {
+                cur = 0;
+            });
+
+            it('correct output order', function() {
+                t.bfs(tree, config, function() {
+                    expect(this.name).to.be.equal(order.bfs[cur++]);
+                });
+            });
+        });
+        describe('find', function() {
+            var res = t.find(tree, config, function() { return this.name === 'f'; });
+            it('returns undefined on the children nodes that don\'t match the custom childrenName property', function() {
+                expect(typeof res).to.equal('undefined');
+            });
+
+            var res2 = t.find(tree, config, function() {  return this.name === 'c'; });
+            it('finds a node that exists', function() {
+                expect(res2.name).to.equal('c');
+            });
+        });
+    })
 });
 

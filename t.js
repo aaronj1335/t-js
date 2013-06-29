@@ -54,7 +54,7 @@ var _dfsPostOrder,
     isArray = function(o) {
         return Object.prototype.toString.call(o) == '[object Array]';
     },
-    _getChildrenName = function ( config ) {   
+    getChildrenName = function ( config ) {
        return config.childrenName || 'children';
     };
 
@@ -96,10 +96,11 @@ if (typeof exports !== 'undefined') {
 t.bfs = function(node) {
 
     var cur, callback, i, length, par,
-        config = arguments.length === 3? arguments[1] : {},
+        isConfigSet = arguments.length === 3,
+        config = isConfigSet ? arguments[1] : {},
         queue = isArray(node)? node.slice(0) : [node],
         parents = [undefined],
-        childrenName = _getChildrenName(config);
+        childrenName = getChildrenName(config);
 
     if (node == null) return node;
 
@@ -159,13 +160,13 @@ t.bfs = function(node) {
 //  returns: the first `node` argument
 //
 t.dfs = function(node) {
-    var cur, par, children, ctrl, i, ret, numArgs = arguments.length,
+    var cur, par, children, ctrl, i, ret,
+        isConfigSet = arguments.length === 3,
         nodes = isArray(node)? node.slice(0).reverse() : [node],
-        config = numArgs === 3? arguments[1] : {},
-        callback = arguments[numArgs === 3? 2 : 1],
+        config = isConfigSet ? arguments[1] : {},
+        callback = arguments[isConfigSet ? 2 : 1],
         parents = [],
-        childrenName = _getChildrenName(config);
-       
+        childrenName = getChildrenName(config);
     if (typeof nodes[0] === 'undefined' && nodes.length === 1) return;
 
     if (config.order === 'post') {
@@ -224,15 +225,15 @@ t.dfs = function(node) {
 //
 t.map = function() {
     var node = arguments[0],
-        numArgs = arguments.length,
-        config = numArgs === 3? arguments[1] : {},
+        isConfigSet = arguments.length === 3,
+        config = isConfigSet ? arguments[1] : {},
         filter = config.filter,
-        nodeFactory = arguments[numArgs === 3? 2 : 1],
+        nodeFactory = arguments[isConfigSet ? 2 : 1],
         ret = isArray(node)? [] : undefined,
         last = function(l) { return l[l.length-1]; },
         parentStack = [],
-        childrenName = _getChildrenName(config);
-  
+        childrenName = getChildrenName(config);
+
     t.dfs(node, config, function(n, par, ctrl) {
         var curParent = last(parentStack),
             newNode = nodeFactory(n, curParent? curParent.ret : undefined);
@@ -256,7 +257,7 @@ t.map = function() {
         } else {
             curParent.ret[childrenName].push(newNode);
 
-            if (n === last(curParent.n.children)) {
+            if (n === last(curParent.n[childrenName])) {
                 parentStack.pop();
                 if (curParent.ret[childrenName] && ! curParent.ret[childrenName].length)
                     delete curParent.ret[childrenName];
@@ -297,8 +298,10 @@ t.map = function() {
 //
 // returns: a new tree, filtered by the callback function
 //
-t.filter = function(node, nodeFactory) {
-    var config = arguments.length === 3 ? arguments[1] : {};
+t.filter = function(node) {
+    var isConfigSet = arguments.length === 3,
+        nodeFactory =  arguments[isConfigSet ? 2 : 1];
+        config = isConfigSet ? arguments[1] : {};
     return t.map(node, {
         filter: true,
         childrenName: config.childrenName
@@ -327,10 +330,12 @@ t.filter = function(node, nodeFactory) {
 //      - `node1`: the node from the first tree
 //      - `node2`: the node from the second tree
 //
-t.stroll = function(tree1, tree2, callback) {
+t.stroll = function(tree1, tree2) {
     var i, children, node2,
-        config = arguments.length === 4 ? arguments[2] : {},
-        childrenName = _getChildrenName(config),
+        isConfigSet = arguments.length === 4,
+        callback =  arguments[ isConfigSet ? 3 : 2],
+        config = isConfigSet ? arguments[2] : {},
+        childrenName = getChildrenName(config),
         nodes2 = isArray(tree2)? tree2.slice(0).reverse() : [tree2],
         len = function(a) { return typeof a === 'undefined'? 0 : a.length; };
       
@@ -369,12 +374,13 @@ t.stroll = function(tree1, tree2, callback) {
 //
 // returns: the found node
 //
-t.find = function(tree, callback) {
+t.find = function( tree ) {
     var found,
-        config = arguments.length === 3 ? {} : arguments[1],
-        childrenName = _getChildrenName(config);
-        
+        isConfigSet = arguments.length === 3,
+        callback =  arguments[ isConfigSet ? 2 : 1],
+        config = isConfigSet ? arguments[1] : {};
     t.dfs(tree, config, function(node, par, ctrl) {
+
         if (callback.call(node, node, par)) {
             ctrl.stop = true;
             found = this;
@@ -397,7 +403,7 @@ _dfsPostOrder = function(nodes, config, callback) {
             index: 0,
             ret: []
         }],
-        childrenName = _getChildrenName(config);
+        childrenName = getChildrenName(config);
 
     while (stack.length) {
         cur = last(stack);
