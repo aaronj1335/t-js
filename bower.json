@@ -1,0 +1,10 @@
+{
+  "name": "t-js",
+  "version": "0.5.0",
+  "main": "t.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
