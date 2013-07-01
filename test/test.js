@@ -1,4 +1,5 @@
 /*global expect:true, describe, it, beforeEach*/
+/*jslint expr:true*/
 
 var pluck = function(key, arr) {
     var i, len, ret = [], cur = arr.length? arr[0] : undefined;
@@ -25,9 +26,9 @@ var printTree = function(t, level) {
     return ret;
 };
 
-var t = require('t'),
+var t = require('./../t'),
     expect = require('chai').expect,
-    data = require('test/fixtures');
+    data = require('./fixtures');
 
 describe('t', function(){
     var tree = data[0].tree,
@@ -107,7 +108,7 @@ describe('t', function(){
         });
 
         it('returns immediately if first arg is undefined', function() {
-            var tree = undefined, count = 0;
+            var tree, count = 0;
 
             t.dfs(tree, function() {
                 count++;
@@ -154,7 +155,8 @@ describe('t', function(){
 
             var tree2 = t.map(tree, makeNode);
             t.dfs(tree2, function(node, par) {
-                expect(node.other).to.be.equal('some other prop for ' + node.name);
+                expect(node.other).
+                    to.be.equal('some other prop for ' + node.name);
                 expect(node).to.not.equal(dict[node.name]);
                 if (node.par)
                     expect(node.par.name).to.be.equal(par.name);
@@ -203,7 +205,7 @@ describe('t', function(){
         });
 
         it('correctly removes children arrays', function() {
-            var tree2 = t.filter(tree, makeNode), correct = false;
+            var tree2 = t.filter(tree, makeNode);
             t.dfs(tree2, function() {
                 if (this.name === 'h')
                     expect(this.children).to.equal(undefined);
@@ -224,7 +226,7 @@ describe('t', function(){
                     pluck('name', node2.children) : [];
 
                 if (node1.children)
-                    node1.children.forEach(function(n, i) {
+                    node1.children.forEach(function(n) {
                         if (node2Children.indexOf(n.name) < 0)
                             subset = false;
                     });
@@ -300,11 +302,7 @@ describe('t', function(){
         });
 
         it('correctly captures return values of list', function() {
-            var ret,
-                tree = data[1].tree,
-                dict = data[1].dict,
-                order = data[1].order,
-                actualOrder = [];
+            var ret, tree = data[1].tree, actualOrder = [];
             expect(tree).to.be.an.instanceof(Array);
             ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
                 var childNames = pluck('name', node.children || []);
@@ -316,11 +314,7 @@ describe('t', function(){
         });
 
         it('correctly captures return values 2', function() {
-            var ret,
-                tree = data[2].tree,
-                dict = data[2].dict,
-                order = data[2].order,
-                actualOrder = [];
+            var ret, tree = data[2].tree, actualOrder = [];
             ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
                 var childNames = pluck('name', node.children || []);
                 expect(ret).to.eql(childNames);
@@ -344,10 +338,7 @@ describe('t', function(){
         });
 
         it('can build up a clone of the tree 2', function() {
-            var ret,
-                tree = data[1].tree,
-                dict = data[1].dict,
-                order = data[1].order;
+            var ret, tree = data[1].tree;
             expect(tree).to.be.an.instanceof(Array);
             ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
                 var newNode = {};
@@ -361,10 +352,7 @@ describe('t', function(){
         });
 
         it('can build up a clone of the tree 3', function() {
-            var ret,
-                tree = data[2].tree,
-                dict = data[2].dict,
-                order = data[2].order;
+            var ret, tree = data[2].tree;
             ret = t.dfs(tree, {order: 'post'}, function(node, par, ctrl, ret) {
                 var newNode = {};
                 if (ret.length) {
@@ -411,7 +399,7 @@ describe('t', function(){
                 dict = data[1].dict,
                 order = data[1].order;
 
-            t.bfs(tree, function(node, par) {
+            t.bfs(tree, function(node) {
                 var expected = dict[node.name];
 
                 expect(node.name).to.be.equal(order.bfs[cur++]);
@@ -438,8 +426,7 @@ describe('t', function(){
     });
 
     describe('Custom children names',function(){
-        var ret,
-            tree = data[3].tree,
+        var tree = data[3].tree,
             dict = data[3].dict,
             order = data[3].order,
             config = {childrenName: 'custom_children_name'};
@@ -455,9 +442,10 @@ describe('t', function(){
             });
 
             it('correct output order (post)', function() {
-                t.dfs(tree, {childrenName: config.childrenName, order:'post'}, function() {
-                    expect(this.name).to.be.equal(order.dfsPost[cur++]);
-                });
+                t.dfs(tree, {childrenName: config.childrenName, order:'post'},
+                    function() {
+                        expect(this.name).to.be.equal(order.dfsPost[cur++]);
+                    });
             });
         });
         describe('map', function() {
@@ -470,7 +458,7 @@ describe('t', function(){
                     par: par
                 };
             };
-        
+
             it('correctly creates a new tree', function() {
                 var tree = t.map(tree, makeNode);
                 t.dfs(tree, function(node, par) {
@@ -525,7 +513,7 @@ describe('t', function(){
             });
 
             it('correctly removes children arrays', function() {
-                var tree2 = t.filter(tree,config, makeNode), correct = false;
+                var tree2 = t.filter(tree,config, makeNode);
                 t.dfs(tree2, function() {
                     if (this.name === 'h')
                         expect(this.children).to.equal(undefined);
@@ -546,7 +534,7 @@ describe('t', function(){
                         pluck('name', node2.children) : [];
 
                     if (node1.children)
-                        node1.children.forEach(function(n, i) {
+                        node1.children.forEach(function(n) {
                             if (node2Children.indexOf(n.name) < 0)
                                 subset = false;
                         });
@@ -593,16 +581,21 @@ describe('t', function(){
             });
         });
         describe('find', function() {
-            var res = t.find(tree, config, function() { return this.name === 'f'; });
-            it('returns undefined on the children nodes that don\'t match the custom childrenName property', function() {
+            var res = t.find(tree, config, function() {
+                return this.name === 'f';
+            });
+            it('returns undefined on the children nodes that don\'t match ' +
+                'the custom childrenName property', function() {
                 expect(typeof res).to.equal('undefined');
             });
 
-            var res2 = t.find(tree, config, function() {  return this.name === 'c'; });
+            var res2 = t.find(tree, config, function() {
+                return this.name === 'c';
+            });
             it('finds a node that exists', function() {
                 expect(res2.name).to.equal('c');
             });
         });
-    })
+    });
 });
 

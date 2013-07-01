@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+src=t.js
+target=README.md
+
+grep '^\/\/' < $src | sed -E 's|^//[ ]?||' > $target
+
+echo            >> $target
+echo 'license'  >> $target
+echo '-------'  >> $target
+cat LICENSE     >> $target
