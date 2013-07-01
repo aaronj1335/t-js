@@ -55,7 +55,7 @@ var _dfsPostOrder,
         return Object.prototype.toString.call(o) === '[object Array]';
     },
     getChildrenName = function ( config ) {
-       return config.childrenName || 'children';
+       return config.childrenName || 'children';
     };
 
 if (typeof exports !== 'undefined') {
