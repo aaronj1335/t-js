@@ -2,7 +2,9 @@ version 0.5.1 ([source](https://github.com/aaronj1335/t-js))
 
 t-js is freely distributable under the MIT license
 
-<img src="https://api.travis-ci.org/aaronj1335/t-js.png?branch=master">
+<a href="https://travis-ci.org/aaronj1335/t-js" target=_blank>
+  <img src="https://api.travis-ci.org/aaronj1335/t-js.png?branch=master">
+</a>
 
 overview
 ========
